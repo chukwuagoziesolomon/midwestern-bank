@@ -5,7 +5,7 @@ import { ArrowRight, ArrowLeft, Quote } from "lucide-react";
 import Link from "next/link";
 
 export default function SignUp() {
-  const [tab, setTab] = useState("individual");
+  const [tab, setTab] = useState<"individual" | "business">("individual");
   const testimonials = {
     individual: [
       {
