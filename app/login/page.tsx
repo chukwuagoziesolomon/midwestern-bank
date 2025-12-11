@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
-  const [tab, setTab] = useState("individual");
+  const [tab, setTab] = useState<"individual" | "business">("individual");
   const testimonials = {
     individual: [
       {
