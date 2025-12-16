@@ -1,31 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import { ShieldCheck, KeyRound, Smartphone, Eye, Lock } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 export default function Security() {
   return (
     <div className="min-h-screen bg-[#181818] font-sans text-white">
       {/* Header/Navbar */}
-      <header className="w-full flex justify-center pt-8 pb-2">
-        <div className="flex items-center justify-between w-full max-w-5xl px-8 py-4 rounded-2xl bg-[#232323] border border-[#232323] shadow-lg">
-          <div className="flex items-center gap-3">
-            <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center">
-              <Image src="/logo.svg" alt="YourBank Logo" width={28} height={28} />
-            </span>
-            <span className="text-2xl font-bold text-white tracking-tight">YourBank</span>
-          </div>
-          <nav className="hidden md:flex gap-8 text-white text-base font-medium">
-            <a href="/" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="/careers" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="/about" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="/security" className="hover:text-[#B6FF48] transition">Security</a>
-          </nav>
-          <div className="flex gap-3">
-            <button className="hidden md:inline-block px-6 py-2 rounded-full bg-[#232323] text-white font-semibold hover:bg-[#B6FF48] hover:text-black transition">Sign Up</button>
-            <button className="px-6 py-2 rounded-full bg-[#B6FF48] text-black font-semibold hover:bg-[#d6ff8a] transition">Login</button>
-          </div>
-        </div>
-      </header>
+      <Navbar active="security" />
       {/* Hero Section */}
       <section className="w-full flex justify-center pt-10 pb-16">
         <div className="max-w-5xl w-full bg-[#232323] border border-[#232323] rounded-2xl shadow-xl p-10 flex flex-col md:flex-row items-center gap-8">

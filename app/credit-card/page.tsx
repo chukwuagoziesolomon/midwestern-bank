@@ -1,16 +1,35 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
+import { useState } from "react";
 import Link from "next/link";
 import { CreditCard, Banknote } from "lucide-react";
 
 export default function CreditCardPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#181818] via-[#232323] to-[#101010] font-sans text-white flex">
-      {/* Sidebar */}
-      <Sidebar active="credit-card" />
-      {/* Main Content */}
-      <main className="flex-1 p-10 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-[#181818] via-[#232323] to-[#101010] font-sans text-white flex flex-col md:flex-row">
+      {/* Sidebar for desktop, overlay for mobile */}
+      <div className={`fixed inset-0 z-40 md:hidden transition ${sidebarOpen ? "block" : "hidden"}`}>
+        <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+        <div className="relative z-50 w-64 h-full">
+          <Sidebar active="credit-card" onClose={() => setSidebarOpen(false)} />
+        </div>
+      </div>
+      <div className="hidden md:block">
+        <Sidebar active="credit-card" />
+      </div>
+      <main className="flex-1 p-4 md:p-10 flex flex-col items-center justify-center">
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 bg-[#232323] border border-[#B6FF48] rounded-full p-2 shadow-lg focus:outline-none"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Open sidebar"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#B6FF48]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
         <div className="w-full max-w-2xl bg-[#232323]/80 rounded-2xl p-8 shadow-2xl border border-[#232323]">
           <h2 className="text-2xl font-bold mb-8 text-[#B6FF48]">Credit Card Deposit</h2>
           <form className="flex flex-col gap-4">

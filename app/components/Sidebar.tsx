@@ -2,9 +2,21 @@
 import Link from "next/link";
 import { Wallet, Send, TrendingUp, CreditCard, Banknote, User, ArrowRight } from "lucide-react";
 
-export default function Sidebar({ active }: { active?: string }) {
+export default function Sidebar({ active, onClose }: { active?: string; onClose?: () => void }) {
   return (
-    <aside className="w-64 bg-[#232323]/80 border-r border-[#232323] flex flex-col py-8 px-6 min-h-screen backdrop-blur-md">
+    <aside className="w-64 bg-[#232323]/80 border-r border-[#232323] flex flex-col py-8 px-6 min-h-screen backdrop-blur-md relative">
+      {/* Close button for mobile sidebar */}
+      {onClose && (
+        <button
+          className="absolute top-4 right-4 md:hidden bg-[#232323] border border-[#B6FF48] rounded-full p-2 z-50"
+          onClick={onClose}
+          aria-label="Close sidebar"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#B6FF48]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
       <div className="flex items-center gap-3 mb-10">
         <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center shadow-lg">
           <Wallet size={28} color="#232323" />

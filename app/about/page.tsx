@@ -1,31 +1,14 @@
 "use client";
+
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 export default function About() {
   return (
     <div className="min-h-screen bg-[#181818] font-sans text-white">
       {/* Header/Navbar */}
-      <header className="w-full flex justify-center pt-8 pb-2">
-        <div className="flex items-center justify-between w-full max-w-5xl px-8 py-4 rounded-2xl bg-[#232323] border border-[#232323] shadow-lg">
-          <div className="flex items-center gap-3">
-            <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center">
-              <Image src="/logo.svg" alt="YourBank Logo" width={28} height={28} />
-            </span>
-            <span className="text-2xl font-bold text-white tracking-tight">YourBank</span>
-          </div>
-          <nav className="hidden md:flex gap-8 text-white text-base font-medium">
-            <a href="/" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="/careers" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="/about" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="/security" className="hover:text-[#B6FF48] transition">Security</a>
-          </nav>
-          <div className="flex gap-3">
-            <button className="hidden md:inline-block px-6 py-2 rounded-full bg-[#232323] text-white font-semibold hover:bg-[#B6FF48] hover:text-black transition">Sign Up</button>
-            <button className="px-6 py-2 rounded-full bg-[#B6FF48] text-black font-semibold hover:bg-[#d6ff8a] transition">Login</button>
-          </div>
-        </div>
-      </header>
+      <Navbar active="about" />
       {/* Hero Section */}
       <section className="w-full flex justify-center pt-10 pb-16">
         <div className="max-w-5xl w-full bg-[#232323] border border-[#232323] rounded-2xl shadow-xl p-10 flex flex-col md:flex-row items-center gap-8">
@@ -37,7 +20,7 @@ export default function About() {
             <p className="text-[#ededed] mb-4">At YourBank, we believe that banking should be more than just transactions. It should be an experience that empowers individuals and businesses to thrive and reach their financial goals. As a trusted financial institution, we are committed to delivering exceptional banking services that go beyond expectations. With a focus on innovation, personalized solutions, and unwavering integrity, we strive to provide the best banking experience for our valued customers. Join us on this exciting journey and discover a new level of banking excellence.</p>
           </div>
           <div className="flex-1 flex justify-center">
-            <Image src="/about-hero.jpg" alt="Bank Team" width={320} height={180} className="rounded-xl object-cover" />
+            <Image src="/about-hero.png" alt="Bank Team" width={320} height={180} className="rounded-xl object-cover" />
           </div>
         </div>
       </section>

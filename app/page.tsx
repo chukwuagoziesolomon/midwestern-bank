@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CreditCard, PiggyBank, Home as LucideHome, User, Users, Shield, Briefcase, MessageSquare, ArrowRight, ArrowLeft, Star, HelpCircle, Smartphone, BarChart, Headphones, Clock, ShieldCheck, Send, GraduationCap, Banknote, Wallet, TrendingUp, Briefcase as LucideBriefcase } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import Navbar from "./components/Navbar";
 
 // import ParticleBackground from "./ParticleBackground";
 
@@ -12,28 +13,8 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen font-sans bg-[#0a0a0a] overflow-hidden">
-      {/* Header/Navbar inside rounded card */}
-      <header className="w-full flex justify-center pt-8 pb-2 z-20 relative">
-        <div className="flex items-center justify-between w-full max-w-5xl px-8 py-4 rounded-2xl bg-[#181818] border border-[#232323] shadow-lg">
-          <div className="flex items-center gap-3">
-            {/* Header logo */}
-            <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center">
-              <Briefcase size={28} color="#181818" />
-            </span>
-            <span className="text-2xl font-bold text-white tracking-tight">Mid Western Bank</span>
-          </div>
-          <nav className="hidden md:flex gap-8 text-white text-base font-medium">
-            <a href="/" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="/careers" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="/about" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="/security" className="flex items-center gap-2 hover:text-[#B6FF48] transition"><Shield size={18} /> Security</a>
-          </nav>
-          <div className="flex gap-3">
-            <Link href="/signup" className="hidden md:inline-block px-6 py-2 rounded-full bg-[#232323] text-white font-semibold hover:bg-[#B6FF48] hover:text-black transition">Sign Up</Link>
-            <Link href="/login" className="px-6 py-2 rounded-full bg-[#B6FF48] text-black font-semibold hover:bg-[#d6ff8a] transition">Login</Link>
-          </div>
-        </div>
-      </header>
+      {/* Header/Navbar */}
+      <Navbar active="home" />
       {/* Hero Section */}
       <section className="relative w-full flex flex-col md:flex-row items-start justify-between max-w-7xl mx-auto px-8 pt-10 pb-20 z-10">
         <div className="flex-1 flex flex-col gap-6 max-w-xl">
