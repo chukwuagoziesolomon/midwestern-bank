@@ -211,7 +211,7 @@ export default function Home() {
         <section 
           className="relative w-full h-screen flex items-center justify-center bg-cover bg-center" 
           style={{ 
-            backgroundImage: 'url(/hero.png)',
+            backgroundImage: 'url(/Hero.png)',
             transform: `translateY(${scrollY * 0.5}px)`
           }}
         >
