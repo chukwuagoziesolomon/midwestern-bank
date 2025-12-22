@@ -2,6 +2,17 @@
 "use client";
 import Sidebar from "../components/Sidebar";
 import { useState } from "react";
+
+type TransactionType = {
+  status: string;
+  date: string;
+  time: string;
+  description: string;
+  category: string;
+  amount: string;
+  receiver: string;
+  bank: string;
+};
 import { TrendingUp, User, Banknote } from "lucide-react";
 import Link from "next/link";
 
@@ -34,7 +45,7 @@ const transactions = [
 
 export default function Transactions() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedTx, setSelectedTx] = useState(null);
+  const [selectedTx, setSelectedTx] = useState<TransactionType | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <div className="min-h-screen bg-white font-sans text-black flex flex-col md:flex-row">
