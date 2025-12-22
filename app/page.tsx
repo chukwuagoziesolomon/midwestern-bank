@@ -1,495 +1,658 @@
 "use client";
 
 import Image from "next/image";
-import { CreditCard, PiggyBank, Home as LucideHome, User, Users, Shield, Briefcase, MessageSquare, ArrowRight, ArrowLeft, Star, HelpCircle, Smartphone, BarChart, Headphones, Clock, ShieldCheck, Send, GraduationCap, Banknote, Wallet, TrendingUp, Briefcase as LucideBriefcase } from "lucide-react";
-import { useState } from "react";
+import { CreditCard, PiggyBank, Home as LucideHome, User, Users, Shield, Briefcase, MessageSquare, ArrowRight, ArrowLeft, Star, HelpCircle, Smartphone, BarChart, Headphones, Clock, ShieldCheck, Send, GraduationCap, Banknote, Wallet, TrendingUp, Briefcase as LucideBriefcase, TrendingDown, DollarSign, ArrowUpRight, Sparkles } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 
-// import ParticleBackground from "./ParticleBackground";
+// Scroll Observer Hook
+const useScrollAnimation = () => {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('scroll-fade-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-export default function Home() {
-  const [useCaseTab, setUseCaseTab] = useState<"individual" | "business">("individual");
+    document.querySelectorAll('.scroll-animate').forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+};
+
+// Enhanced Typewriter Effect Hook with multiple phrases
+const useTypewriter = (phrases: string[], speed: number = 100, pauseTime: number = 2000) => {
+  const [displayText, setDisplayText] = useState("");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [charIndex, setCharIndex] = useState(0);
+
+  useEffect(() => {
+    const currentPhrase = phrases[phraseIndex];
+    
+    const timer = setTimeout(() => {
+      if (!isDeleting && charIndex < currentPhrase.length) {
+        setDisplayText(currentPhrase.substring(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      } else if (!isDeleting && charIndex === currentPhrase.length) {
+        setTimeout(() => setIsDeleting(true), pauseTime);
+      } else if (isDeleting && charIndex > 0) {
+        setDisplayText(currentPhrase.substring(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+      } else if (isDeleting && charIndex === 0) {
+        setIsDeleting(false);
+        setPhraseIndex((phraseIndex + 1) % phrases.length);
+      }
+    }, isDeleting ? speed / 2 : speed);
+
+    return () => clearTimeout(timer);
+  }, [charIndex, isDeleting, phraseIndex, phrases, speed, pauseTime]);
+
+  return displayText;
+};
+
+// Floating Stats Component
+const FloatingStats = () => {
+  const stats = [
+    { icon: DollarSign, value: "$2.5B+", label: "Assets Managed", delay: "0s" },
+    { icon: Users, value: "50K+", label: "Happy Clients", delay: "0.2s" },
+    { icon: TrendingUp, value: "99.9%", label: "Uptime", delay: "0.4s" },
+    { icon: Shield, value: "24/7", label: "Security", delay: "0.6s" }
+  ];
 
   return (
-    <div className="relative min-h-screen font-sans bg-[#0a0a0a] overflow-hidden">
-      {/* Header/Navbar */}
-      <Navbar active="home" />
-      {/* Hero Section */}
-      <section className="relative w-full flex flex-col md:flex-row items-start justify-between max-w-7xl mx-auto px-8 pt-10 pb-20 z-10">
-        <div className="flex-1 flex flex-col gap-6 max-w-xl">
-          <div className="mb-2">
-            <span className="inline-block px-4 py-1 rounded-full bg-[#232323] text-xs text-white font-semibold mb-2">For LLC Required, No Credit Check.</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
-            Welcome to <span className="text-[#B6FF48]">mid western bank</span><br />Empowering Your <span className="text-[#B6FF48]">Financial Journey</span>
-          </h1>
-          <p className="text-lg text-[#ededed] mb-6">
-            A toolkit for ambition: we provide comprehensive banking solutions that empower individuals and businesses to achieve their financial goals. We are committed to delivering personalized and innovative services that prioritize our customers' needs.
-          </p>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+      {stats.map((stat, idx) => (
+        <div
+          key={idx}
+          className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-6 transform hover:scale-105 transition-all duration-300 hover:bg-white/20"
+          style={{
+            animation: `floatIn 0.8s ease-out ${stat.delay} both`
+          }}
+        >
+          <stat.icon className="w-8 h-8 text-blue-400 mb-2" />
+          <div className="text-3xl font-bold text-white mb-1">{stat.value}</div>
+          <div className="text-sm text-white/80">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Animated Background Particles
+const ParticleField = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-2 h-2 bg-blue-400/30 rounded-full"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default function Home() {
+  // Testimonial carousel state
+  const testimonials = [
+    {
+      text: "Mid Western Bank has been my trusted financial partner for years. Their personalized service and innovative digital banking solutions have made managing my finances a breeze.",
+      author: "Sam T"
+    },
+    {
+      text: "I recently started my own business, and Mid Western Bank has been essential in helping me set up my banking. Business accounts are feature-rich and tailored to meet their individual needs.",
+      author: "John D"
+    },
+    {
+      text: "I owe the convenience of Mid Western Bank's banking app to managing my finances. It has made it so much easier to keep track of my expenses and save for my goals.",
+      author: "Emily G"
+    }
+  ];
+  
+  const [testimonialIndex, setTestimonialIndex] = useState(0);
+  const handlePrevTestimonial = () => setTestimonialIndex((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+  const handleNextTestimonial = () => setTestimonialIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+  const [useCaseTab, setUseCaseTab] = useState<"individual" | "business">("individual");
+  const [scrollY, setScrollY] = useState(0);
+  
+  // Multi-phrase typewriter effect
+  const typedText = useTypewriter([
+    "Your Financial Future Starts Here",
+    "Banking Made Simple & Secure",
+    "Empowering Your Dreams"
+  ], 100, 2000);
+  
+  // Parallax effect
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Apply scroll animations on mount
+  useScrollAnimation();
+
+  return (
+    <>
+      <style jsx global>{`
+        @keyframes floatIn {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          25% {
+            transform: translateY(-20px) translateX(10px);
+          }
+          50% {
+            transform: translateY(-10px) translateX(-10px);
+          }
+          75% {
+            transform: translateY(-15px) translateX(5px);
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
+        
+        .shimmer-button {
+          background: linear-gradient(90deg, #0000FF 0%, #4169E1 50%, #0000FF 100%);
+          background-size: 200% 100%;
+          animation: shimmer 3s infinite;
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(0, 0, 255, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 40px rgba(0, 0, 255, 0.8);
+          }
+        }
+        
+        .glow-effect {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+      `}</style>
+      
+      <div className="relative min-h-screen font-sans bg-white overflow-hidden">
+        {/* Hero Section with enhanced effects */}
+        <section 
+          className="relative w-full h-screen flex items-center justify-center bg-cover bg-center" 
+          style={{ 
+            backgroundImage: 'url(/hero.png)',
+            transform: `translateY(${scrollY * 0.5}px)`
+          }}
+        >
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
           
-                  <Link href="/login" className="px-8 py-3 rounded-full bg-[#B6FF48] text-black font-bold text-lg shadow-lg hover:bg-[#d6ff8a] transition w-fit">Open Account</Link>
-        </div>
-        {/* Placeholder for card UI */}
-        <div className="flex-1 flex justify-end items-start mt-10 md:mt-0">
-          <div className="relative bg-[#181818]/90 border border-[#232323] rounded-2xl shadow-2xl p-8 w-[370px] max-w-full flex flex-col" style={{boxShadow: '0 4px 32px 0 #B6FF48a0'}}>
-            {/* Green Arrow SVGs - background */}
-            <div className="absolute right-4 top-8 z-0 opacity-80 pointer-events-none">
-              <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 80L80 10" stroke="#B6FF48" strokeWidth="4" strokeLinecap="round"/>
-                <path d="M60 10H80V30" stroke="#B6FF48" strokeWidth="4" strokeLinecap="round"/>
-                <path d="M30 40L70 0" stroke="#B6FF48" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+          {/* Particle field */}
+          <ParticleField />
+          
+          {/* Navbar overlay */}
+          <div className="absolute top-0 left-0 right-0 z-20">
+            <Navbar active="home" />
+          </div>
+          
+          {/* Hero content with stunning animations */}
+          <div className="relative z-10 text-center text-white px-8 max-w-6xl">
+            {/* Sparkle icon */}
+            <div className="flex justify-center mb-6">
+              <div className="relative">
+                <Sparkles className="w-16 h-16 text-blue-400 animate-pulse" />
+                <div className="absolute inset-0 blur-xl bg-blue-400/50 animate-pulse"></div>
+              </div>
             </div>
-            {/* Monthly Income Pill */}
-            <div className="absolute -top-6 left-4 z-10">
-              <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#B6FF48] text-[#181818] text-sm font-bold shadow-lg">
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#232323"/></svg>
-                + $5000,00 Monthly Income
+            
+            {/* Main headline with typewriter */}
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
+              <span className="inline-block bg-gradient-to-r from-white via-blue-200 to-white bg-clip-text text-transparent">
+                Welcome to
               </span>
+              <br />
+              <span className="inline-block bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400 bg-clip-text text-transparent">
+                Mid Western Bank
+              </span>
+            </h1>
+            
+            {/* Animated subtitle with typewriter effect */}
+            <div className="h-16 mb-8">
+              <p className="text-2xl md:text-4xl font-semibold text-blue-200">
+                {typedText}
+                <span className="animate-pulse">|</span>
+              </p>
             </div>
-            {/* Card Content */}
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="inline-block w-3 h-3 rounded-full bg-[#B6FF48]" />
-                <span className="text-white font-semibold text-lg">$8000.00</span>
-              </div>
-              {/* Transactions */}
-              <div className="mb-4">
-                <div className="text-xs text-[#ededed] mb-2">Your Transactions</div>
-                <div className="flex flex-col gap-2">
-                  {/* Transaction 1 - Active */}
-                  <div className="flex items-center justify-between text-white text-sm font-semibold">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#B6FF48] text-[#181818] font-bold">J</span>
-                      <span>Joel Kenley</span>
-                    </div>
-                    <span>-$68.00</span>
-                  </div>
-                  {/* Transaction 2 - Faded */}
-                  <div className="flex items-center justify-between text-[#888] text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#FFD600] text-[#181818] font-bold">M</span>
-                      <span>Mark Smith</span>
-                    </div>
-                    <span>-$68.00</span>
-                  </div>
-                  {/* Transaction 3 - Faded */}
-                  <div className="flex items-center justify-between text-[#444] text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#B6FF48]/40 text-[#181818] font-bold">L</span>
-                      <span>Lenen Roy</span>
-                    </div>
-                    <span>-$68.00</span>
-                  </div>
-                </div>
-              </div>
-              {/* Money Exchange */}
-              <div className="mb-4">
-                <div className="text-xs text-[#ededed] mb-2">Money Exchange</div>
-                <div className="flex items-center gap-4 bg-[#232323] rounded-xl px-4 py-3 mb-2">
-                  {/* INR */}
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block w-7 h-7 rounded-full overflow-hidden">
-                      <img src="https://flagcdn.com/in.svg" alt="INR" className="w-full h-full object-cover" />
-                    </span>
-                    <span className="text-white text-sm">INR</span>
-                  </div>
-                  <span className="text-[#ededed] text-xs">Indian Rupees</span>
-                  <span className="text-white font-bold ml-auto">5,0000</span>
-                </div>
-                <div className="flex items-center gap-4 bg-[#232323] rounded-xl px-4 py-3 mb-2">
-                  {/* USD */}
-                  <div className="flex items-center gap-2">
-                    <span className="inline-block w-7 h-7 rounded-full overflow-hidden">
-                      <img src="https://flagcdn.com/us.svg" alt="USD" className="w-full h-full object-cover" />
-                    </span>
-                    <span className="text-white text-sm">USD</span>
-                  </div>
-                  <span className="text-[#ededed] text-xs">United States Dollar</span>
-                  <span className="text-white font-bold ml-auto">12.00</span>
-                </div>
-              </div>
-              {/* Exchange Button */}
-              <button className="w-full mt-2 py-3 rounded-full bg-[#B6FF48] text-[#181818] font-bold text-base shadow-lg hover:bg-[#d6ff8a] transition">Exchange</button>
-              {/* Supported Currency Pills */}
-              <div className="flex justify-center gap-2 mt-6">
-                {['€','£','₹','₦','₿'].map((cur, i) => (
-                  <span key={i} className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#232323] text-[#B6FF48] text-lg font-bold shadow">{cur}</span>
-                ))}
+            
+            {/* CTA Button with enhanced effects */}
+            <div className="flex justify-center mb-16">
+              <button className="group relative px-12 py-5 rounded-full shimmer-button text-white font-bold text-xl shadow-2xl hover:scale-105 transition-all duration-300 glow-effect overflow-hidden">
+                <span className="relative z-10 flex items-center gap-3">
+                  Open Your Account
+                  <ArrowUpRight className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              </button>
+            </div>
+            
+            {/* Floating stats cards */}
+            <FloatingStats />
+            
+            {/* Scroll indicator */}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce">
+              <div className="w-6 h-10 border-2 border-white/50 rounded-full flex items-start justify-center p-2">
+                <div className="w-1 h-3 bg-white/50 rounded-full animate-pulse"></div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Products Section - Figma Style */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20 relative">
-        <div className="mb-10 text-left">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Our <span className="text-[#B6FF48]">Products</span>
-          </h2>
-          <p className="text-lg text-[#ededed] max-w-2xl">Discover a range of comprehensive and customizable banking products at YourBank, designed to suit your unique financial needs and aspirations.</p>
-        </div>
-        {/* Toggle Buttons */}
-        <div className="flex gap-4 mb-8">
-          <button className="px-6 py-2 rounded-full bg-[#B6FF48] text-[#181818] font-bold shadow hover:bg-[#d6ff8a] transition">For Individuals</button>
-          <button className="px-6 py-2 rounded-full bg-[#232323] text-[#B6FF48] font-bold shadow hover:bg-[#B6FF48] hover:text-[#181818] transition">For Businesses</button>
-        </div>
-        {/* Product Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Checking Accounts */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative">
-            <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#B6FF48]/30 rounded-full blur-xl z-0" />
-            <span className="inline-block w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center mb-4 z-10 border-2 border-[#B6FF48]">
-              <CreditCard size={32} color="#B6FF48" strokeWidth={2.5} />
-            </span>
-            <h3 className="text-xl font-bold text-white mb-2">Checking Accounts</h3>
-            <p className="text-[#ededed]">Enjoy easy and convenient access to your funds with our range of checking account options. Benefit from features such as online and mobile banking, debit cards, and free ATM access.</p>
+        {/* Products Section */}
+        <section className="w-full max-w-7xl mx-auto px-8 py-20 relative">
+          <div className="mb-10 text-left scroll-animate">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2">
+              Our <span className="text-blue-600 italic">Products</span>
+            </h2>
+            <p className="text-lg text-gray-700 max-w-2xl">Discover a range of comprehensive and customizable banking products at Mid Western Bank, designed to suit your unique financial needs and aspirations.</p>
           </div>
-          {/* Savings Accounts */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative">
-            <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#B6FF48]/30 rounded-full blur-xl z-0" />
-            <span className="inline-block w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center mb-4 z-10 border-2 border-[#B6FF48]">
-              <PiggyBank size={32} color="#B6FF48" strokeWidth={2.5} />
-            </span>
-            <h3 className="text-xl font-bold text-white mb-2">Savings Accounts</h3>
-            <p className="text-[#ededed]">Build your savings with our competitive interest rates and flexible savings account options. Whether you're saving for a specific goal or want to grow your wealth over time, we have the right account for you.</p>
+          
+          {/* Toggle Buttons */}
+          <div className="flex gap-4 mb-8">
+            <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-bold shadow hover:bg-blue-500 transition">For Individuals</button>
+            <button className="px-6 py-2 rounded-full bg-white text-blue-600 font-bold shadow hover:bg-blue-500 hover:text-white transition">For Businesses</button>
           </div>
-          {/* Loans and Mortgages */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative">
-            <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#B6FF48]/30 rounded-full blur-xl z-0" />
-            <span className="inline-block w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center mb-4 z-10 border-2 border-[#B6FF48]">
-              <LucideHome size={32} color="#B6FF48" strokeWidth={2.5} />
-            </span>
-            <h3 className="text-xl font-bold text-white mb-2">Loans and Mortgages</h3>
-            <p className="text-[#ededed]">Realize your dreams with our flexible loan and mortgage options. From personal loans to home mortgages, our experienced loan officers are here to guide you through the application process and help you secure the funds you need.</p>
+          
+          {/* Product Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Checking Accounts */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative scroll-animate stagger-item-1 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-blue-100 rounded-full blur-xl z-0" />
+              <span className="inline-block w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 z-10 border-2 border-blue-600">
+                <CreditCard size={32} color="#0000FF" strokeWidth={2.5} />
+              </span>
+              <h3 className="text-xl font-bold text-black mb-2">Checking Accounts</h3>
+              <p className="text-gray-700">Enjoy easy and convenient access to your funds with our range of checking account options. Benefit from features such as online and mobile banking, debit cards, and free ATM access.</p>
+            </div>
+            
+            {/* Savings Accounts */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative scroll-animate stagger-item-2 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-blue-100 rounded-full blur-xl z-0" />
+              <span className="inline-block w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 z-10 border-2 border-blue-600">
+                <PiggyBank size={32} color="#0000FF" strokeWidth={2.5} />
+              </span>
+              <h3 className="text-xl font-bold text-black mb-2">Savings Accounts</h3>
+              <p className="text-gray-700">Build your savings with our competitive interest rates and flexible savings account options. Whether you're saving for a specific goal or want to grow your wealth over time, we have the right account for you.</p>
+            </div>
+            
+            {/* Loans and Mortgages */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 flex flex-col items-center text-center shadow-lg relative scroll-animate stagger-item-3 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <span className="absolute top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-blue-100 rounded-full blur-xl z-0" />
+              <span className="inline-block w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4 z-10 border-2 border-blue-600">
+                <LucideHome size={32} color="#0000FF" strokeWidth={2.5} />
+              </span>
+              <h3 className="text-xl font-bold text-black mb-2">Loans and Mortgages</h3>
+              <p className="text-gray-700">Realize your dreams with our flexible loan and mortgage options. From personal loans to home mortgages, our experienced loan officers are here to guide you through the application process and help you secure the funds you need.</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Features Section */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Our <span className="text-[#B6FF48]">Features</span></h2>
-          <p className="text-lg text-[#ededed]">Discover powerful features of Mid Western Bank, including seamless online banking, secure transactions, and personalized financial insights.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Online Banking */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <Smartphone size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Online Banking</h3>
-            <p className="text-[#ededed] text-sm">Access your accounts anytime, anywhere, with our secure online banking platform.</p>
+        {/* Features Section */}
+        <section className="w-full max-w-7xl mx-auto px-8 pb-20">
+          <div className="mb-10 text-center scroll-animate">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2">Our <span className="text-blue-600">Features</span></h2>
+            <p className="text-lg text-gray-700">Discover powerful features of Mid Western Bank, including seamless online banking, secure transactions, and personalized financial insights.</p>
           </div>
-          {/* Financial Tools */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <BarChart size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Financial Tools</h3>
-            <p className="text-[#ededed] text-sm">Utilize our suite of financial tools to manage budgets, track spending, and plan for the future.</p>
-          </div>
-          {/* Customer Support */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <Headphones size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Customer Support</h3>
-            <p className="text-[#ededed] text-sm">Get help when you need it with our dedicated customer support team.</p>
-          </div>
-          {/* 24/7 Account Access */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <Clock size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">24/7 Account Access</h3>
-            <p className="text-[#ededed] text-sm">Enjoy the convenience of accessing your accounts anytime, including transfers, bill pay, and more.</p>
-          </div>
-          {/* Mobile Banking App */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <Smartphone size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Mobile Banking App</h3>
-            <p className="text-[#ededed] text-sm">Stay connected on your finances from your phone with our secure mobile banking app.</p>
-          </div>
-          {/* Secure Transactions */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <ShieldCheck size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Secure Transactions</h3>
-            <p className="text-[#ededed] text-sm">Your transactions are protected by advanced security features and encryption.</p>
-          </div>
-          {/* Bill Pay and Transfers */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center">
-            <Send size={32} color="#B6FF48" />
-            <h3 className="text-lg font-bold text-white">Bill Pay and Transfers</h3>
-            <p className="text-[#ededed] text-sm">Easily pay bills and transfer funds with just a few clicks.</p>
-          </div>
-        </div>
-      </section>
-      {/* FAQ Section */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2"><span className="text-[#B6FF48]">Frequently</span> Asked Questions</h2>
-          <p className="text-lg text-[#ededed]">Still have any questions? Contact our team at support@midwesternbank.com</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* FAQ 1 */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <HelpCircle size={20} color="#B6FF48" />
-              <h3 className="text-lg font-bold text-white">How do I open an account with Mid Western Bank?</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Online Banking */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-1 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <Smartphone size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Online Banking</h3>
+              <p className="text-gray-700 text-sm text-center">Access your accounts anytime, anywhere, with our secure online banking platform.</p>
             </div>
-            <p className="text-[#ededed] text-sm">Open an account with us. Simply visit our website and click on the 'Open Account' button. Fill out the required details and provide necessary documentation. For any assistance, our customer support team is available to help.</p>
-          </div>
-          {/* FAQ 2 */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <HelpCircle size={20} color="#B6FF48" />
-              <h3 className="text-lg font-bold text-white">What documents do I need to provide to apply for a loan?</h3>
+            
+            {/* Financial Tools */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-2 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <BarChart size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Financial Tools</h3>
+              <p className="text-gray-700 text-sm text-center">Utilize our suite of financial tools to manage budgets, track spending, and plan for the future.</p>
             </div>
-            <p className="text-[#ededed] text-sm">The documents required for a loan application may vary depending on the type of loan you are applying for. Generally, you will need to provide identification, proof of income, and other relevant documents. Our team will guide you through the specific requirements during the application process.</p>
-          </div>
-          {/* FAQ 3 */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <HelpCircle size={20} color="#B6FF48" />
-              <h3 className="text-lg font-bold text-white">How can I access my accounts online?</h3>
+            
+            {/* Customer Support */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-3 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <Headphones size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Customer Support</h3>
+              <p className="text-gray-700 text-sm text-center">Get help when you need it with our dedicated customer support team.</p>
             </div>
-            <p className="text-[#ededed] text-sm">Access your accounts online by visiting our website and clicking on the 'Login' button. Enter your credentials to securely view your account information, make transactions, and manage your finances.</p>
-          </div>
-          {/* FAQ 4 */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg">
-            <div className="flex items-center gap-2 mb-2">
-              <HelpCircle size={20} color="#B6FF48" />
-              <h3 className="text-lg font-bold text-white">Are my transactions and personal information secure?</h3>
+            
+            {/* 24/7 Account Access */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-4 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <Clock size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">24/7 Account Access</h3>
+              <p className="text-gray-700 text-sm text-center">Enjoy the convenience of accessing your accounts anytime, including transfers, bill pay, and more.</p>
             </div>
-            <p className="text-[#ededed] text-sm">At Mid Western Bank, the security of your transactions and personal information is our top priority. We employ advanced security measures and encryption to safeguard your data.</p>
+            
+            {/* Mobile Banking App */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-5 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <Smartphone size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Mobile Banking App</h3>
+              <p className="text-gray-700 text-sm text-center">Stay connected on your finances from your phone with our secure mobile banking app.</p>
+            </div>
+            
+            {/* Secure Transactions */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <ShieldCheck size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Secure Transactions</h3>
+              <p className="text-gray-700 text-sm text-center">Your transactions are protected by advanced security features and encryption.</p>
+            </div>
+            
+            {/* Bill Pay and Transfers */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg flex flex-col gap-3 items-center scroll-animate stagger-item-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <Send size={32} color="#0000FF" />
+              <h3 className="text-lg font-bold text-black">Bill Pay and Transfers</h3>
+              <p className="text-gray-700 text-sm text-center">Easily pay bills and transfer funds with just a few clicks.</p>
+            </div>
           </div>
-        </div>
-        <div className="flex justify-center mt-8">
-          <button className="px-6 py-2 rounded-full bg-[#232323] text-white font-semibold hover:bg-[#B6FF48] hover:text-black transition">Load All FAQs →</button>
-        </div>
-      </section>
-      {/* Testimonials Section */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Our <span className="text-[#B6FF48]">Testimonials</span></h2>
-          <p className="text-lg text-[#ededed]">Discover how Mid Western Bank has transformed lives with innovative digital solutions and personalized customer service. See why our clients trust us for a secure and prosperous financial journey.</p>
-        </div>
-        <div className="flex flex-col items-center gap-8">
-          <div className="flex gap-8 justify-center w-full">
-            {/* Testimonial 1 */}
-            <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg max-w-md flex-1">
-              <div className="mb-4 flex items-center justify-center">
-                <Star size={32} color="#B6FF48" />
+        </section>
+
+        {/* Use Cases Section */}
+        <section className="w-full max-w-7xl mx-auto px-8 pb-20">
+          <div className="mb-10 text-left scroll-animate">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2">
+              Use <span className="text-blue-600">Cases</span>
+            </h2>
+            <p className="text-lg text-gray-700 max-w-2xl">At Mid Western Bank, we cater to the diverse needs of individuals and businesses alike, offering a wide range of financial solutions.</p>
+          </div>
+          
+          {/* Toggle Buttons */}
+          <div className="flex gap-4 mb-8">
+            <button
+              className={`px-6 py-2 rounded-full font-bold shadow transition ${useCaseTab === 'individual' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'}`}
+              onClick={() => setUseCaseTab('individual')}
+            >
+              For Individuals
+            </button>
+            <button
+              className={`px-6 py-2 rounded-full font-bold shadow transition ${useCaseTab === 'business' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600'}`}
+              onClick={() => setUseCaseTab('business')}
+            >
+              For Businesses
+            </button>
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-10">
+            {/* Card Background */}
+            <div className="relative flex-1 max-w-2xl scroll-animate">
+              <div className="absolute inset-0 rounded-2xl bg-blue-100 blur-2xl z-0" />
+              <div className="relative z-10 grid grid-cols-2 gap-6 p-8 bg-white border border-blue-100 rounded-2xl shadow-xl">
+                {useCaseTab === 'individual' ? (
+                  <>
+                    <div className="flex flex-col items-center text-center">
+                      <Wallet size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Managing Personal Finances</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <PiggyBank size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Saving for the Future</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <LucideHome size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Homeownership</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <GraduationCap size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Education Funding</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col items-center text-center">
+                      <Banknote size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Cash Flow Management</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <TrendingUp size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Drive Business Expansion</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <LucideBriefcase size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Streamline Payroll Processing</span>
+                    </div>
+                    <div className="flex flex-col items-center text-center">
+                      <CreditCard size={32} color="#0000FF" />
+                      <span className="text-black font-semibold mt-2">Payment Solutions</span>
+                    </div>
+                  </>
+                )}
               </div>
-              <p className="text-[#ededed] text-base mb-4">Mid Western Bank has been my trusted financial partner for years. Their personalized service and innovative digital banking solutions have made managing my finances a breeze.</p>
-              <div className="text-[#B6FF48] font-bold">Sam T</div>
             </div>
-            {/* Testimonial 2 */}
-            <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg max-w-md flex-1">
-              <div className="mb-4 flex items-center justify-center">
-                <Star size={32} color="#B6FF48" />
-              </div>
-              <p className="text-[#ededed] text-base mb-4">I recently started my own business, and Mid Western Bank has been essential in helping me set up my banking. Business accounts are feature-rich and tailored to meet their individual needs.</p>
-              <div className="text-[#B6FF48] font-bold">John D</div>
-            </div>
-            {/* Testimonial 3 */}
-            <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 shadow-lg max-w-md flex-1">
-              <div className="mb-4 flex items-center justify-center">
-                <Star size={32} color="#B6FF48" />
-              </div>
-              <p className="text-[#ededed] text-base mb-4">I owe the convenience of Mid Western Bank's banking app to managing my finances. It has made it so much easier to keep track of my expenses and save for my goals.</p>
-              <div className="text-[#B6FF48] font-bold">Emily G</div>
-            </div>
-          </div>
-          {/* Carousel controls */}
-          <div className="flex gap-2 mt-4">
-            <button className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><ArrowLeft size={18} color="#181818" /></button>
-            <button className="w-8 h-8 rounded-full bg-[#232323] flex items-center justify-center"><ArrowRight size={18} color="#B6FF48" /></button>
-          </div>
-        </div>
-      </section>
-      {/* CTA Section */}
-      <section className="w-full max-w-4xl mx-auto px-8 pb-20">
-        <div className="bg-[#181818] border border-[#232323] rounded-2xl shadow-xl p-10 flex flex-col items-center text-center">
-        </div>
-      </section>
-      {/* Products Section */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Our <span className="text-[#B6FF48]">Products</span></h2>
-          <p className="text-lg text-[#ededed]">Discover a range of comprehensive and customizable banking products at Mid Western Bank, designed to suit unique financial needs and aspirations.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Checking Accounts */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg">
-            <div className="mb-4">
-              <span className="inline-block w-12 h-12 rounded-full bg-[#B6FF48] flex items-center justify-center">
-                {/* Placeholder icon */}
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#181818" /><path d="M8 12h8M12 8v8" stroke="#B6FF48" strokeWidth="2" strokeLinecap="round" /></svg>
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Checking Accounts</h3>
-            <p className="text-[#ededed]">Enjoy easy access to your funds with our range of checking accounts, online banking, debit cards, and free ATM access.</p>
-          </div>
-          {/* Savings Accounts */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg">
-            <div className="mb-4">
-              <span className="inline-block w-12 h-12 rounded-full bg-[#B6FF48] flex items-center justify-center">
-                {/* Placeholder icon */}
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#181818" /><path d="M12 8v8M8 12h8" stroke="#B6FF48" strokeWidth="2" strokeLinecap="round" /></svg>
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Savings Accounts</h3>
-            <p className="text-[#ededed]">Build your savings with our interest rates, online tools, and flexible account options. See the impact of smart saving!</p>
-          </div>
-          {/* Loans and Mortgages */}
-          <div className="bg-[#181818] border border-[#232323] rounded-2xl p-8 flex flex-col items-center text-center shadow-lg">
-            <div className="mb-4">
-              <span className="inline-block w-12 h-12 rounded-full bg-[#B6FF48] flex items-center justify-center">
-                {/* Placeholder icon */}
-                <svg width="28" height="28" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#181818" /><path d="M6 12h12" stroke="#B6FF48" strokeWidth="2" strokeLinecap="round" /></svg>
-              </span>
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Loans and Mortgages</h3>
-            <p className="text-[#ededed]">Access personal and business loans, flexible mortgage options, and expert guidance to help you reach your financial goals.</p>
-          </div>
-        </div>
-      </section>
-      {/* Use Cases Section - Figma Style with Toggle */}
-      <section className="w-full max-w-7xl mx-auto px-8 pb-20">
-        <div className="mb-10 text-left">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Use <span className="text-[#B6FF48]">Cases</span>
-          </h2>
-          <p className="text-lg text-[#ededed] max-w-2xl">At YourBank, we cater to the diverse needs of individuals and businesses alike, offering a wide range of financial solutions.</p>
-        </div>
-        {/* Toggle Buttons */}
-        <div className="flex gap-4 mb-8">
-          <button
-            className={`px-6 py-2 rounded-full font-bold shadow transition ${useCaseTab === 'individual' ? 'bg-[#B6FF48] text-[#181818]' : 'bg-[#232323] text-[#B6FF48]'}`}
-            onClick={() => setUseCaseTab('individual')}
-          >
-            For Individuals
-          </button>
-          <button
-            className={`px-6 py-2 rounded-full font-bold shadow transition ${useCaseTab === 'business' ? 'bg-[#B6FF48] text-[#181818]' : 'bg-[#232323] text-[#B6FF48]'}`}
-            onClick={() => setUseCaseTab('business')}
-          >
-            For Businesses
-          </button>
-        </div>
-        <div className="flex flex-col md:flex-row gap-10">
-          {/* Gradient Card Background */}
-          <div className="relative flex-1 max-w-2xl">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#B6FF48]/30 via-[#232323]/60 to-[#0a0a0a] blur-2xl z-0" />
-            <div className="relative z-10 grid grid-cols-2 gap-6 p-8 bg-[#181818] border border-[#232323] rounded-2xl shadow-xl">
+            
+            {/* Stats and Description */}
+            <div className="flex-1 flex flex-col justify-center gap-8">
               {useCaseTab === 'individual' ? (
-                <>
-                  <div className="flex flex-col items-center text-center">
-                    <Wallet size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Managing Personal Finances</span>
+                <div>
+                  <h3 className="text-black text-xl font-bold mb-2">For Individuals</h3>
+                  <p className="text-gray-700 mb-6">For individuals, our mortgage services pave the way to homeownership, and our flexible personal loans provide vital support during various life milestones. We also prioritize retirement planning, ensuring a financially secure future for our customers.</p>
+                  <div className="flex gap-8 mb-4">
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">78%</span>
+                      <span className="text-gray-700 text-xs">Secure Retirement Planning</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">63%</span>
+                      <span className="text-gray-700 text-xs">Manageable Debt Consolidation</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">91%</span>
+                      <span className="text-gray-700 text-xs">Reducing financial burdens</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center text-center">
-                    <PiggyBank size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Saving for the Future</span>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <LucideHome size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Homeownership</span>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <GraduationCap size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Education Funding</span>
-                  </div>
-                </>
+                  <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-500 transition">Learn More</button>
+                </div>
               ) : (
-                <>
-                  <div className="flex flex-col items-center text-center">
-                    <Banknote size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Cash Flow Management</span>
+                <div>
+                  <h3 className="text-black text-xl font-bold mb-2">For Business</h3>
+                  <p className="text-gray-700 mb-6">For businesses, we empower growth with working capital solutions that optimize cash flow, and our tailored financing options fuel business expansion. Whatever your financial aspirations, Mid Western Bank is committed to providing the right tools and support to achieve them.</p>
+                  <div className="flex gap-8 mb-4">
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">65%</span>
+                      <span className="text-gray-700 text-xs">Cash Flow Management</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">70%</span>
+                      <span className="text-gray-700 text-xs">Drive Business Expansion</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-3xl font-bold text-blue-600">45%</span>
+                      <span className="text-gray-700 text-xs">Streamline Payroll Processing</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center text-center">
-                    <TrendingUp size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Drive Business Expansion</span>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <LucideBriefcase size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Streamline Payroll Processing</span>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <CreditCard size={32} color="#B6FF48" />
-                    <span className="text-white font-semibold mt-2">Payment Solutions</span>
-                  </div>
-                </>
+                  <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-500 transition">Learn More</button>
+                </div>
               )}
             </div>
           </div>
-          {/* Stats and Description */}
-          <div className="flex-1 flex flex-col justify-center gap-8">
-            {useCaseTab === 'individual' ? (
-              <>
-                <div>
-                  <h3 className="text-white text-xl font-bold mb-2">For Individuals</h3>
-                  <p className="text-[#ededed] mb-6">For individuals, our mortgage services pave the way to homeownership, and our flexible personal loans provide vital support during various life milestones. We also prioritize retirement planning, ensuring a financially secure future for our customers.</p>
-                  <div className="flex gap-8 mb-4">
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">78%</span>
-                      <span className="text-[#ededed] text-xs">Secure Retirement Planning</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">63%</span>
-                      <span className="text-[#ededed] text-xs">Manageable Debt Consolidation</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">91%</span>
-                      <span className="text-[#ededed] text-xs">Reducing financial burdens</span>
-                    </div>
-                  </div>
-                  <button className="px-6 py-2 rounded-full bg-[#B6FF48] text-black font-semibold hover:bg-[#d6ff8a] transition">Learn More</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <div>
-                  <h3 className="text-white text-xl font-bold mb-2">For Business</h3>
-                  <p className="text-[#ededed] mb-6">For businesses, we empower growth with working capital solutions that optimize cash flow, and our tailored financing options fuel business expansion. Whatever your financial aspirations, YourBank is committed to providing the right tools and support to achieve them.</p>
-                  <div className="flex gap-8 mb-4">
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">65%</span>
-                      <span className="text-[#ededed] text-xs">Cash Flow Management</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">70%</span>
-                      <span className="text-[#ededed] text-xs">Drive Business Expansion</span>
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <span className="text-3xl font-bold text-[#B6FF48]">45%</span>
-                      <span className="text-[#ededed] text-xs">Streamline Payroll Processing</span>
-                    </div>
-                  </div>
-                  <button className="px-6 py-2 rounded-full bg-[#B6FF48] text-black font-semibold hover:bg-[#d6ff8a] transition">Learn More</button>
-                </div>
-              </>
-            )}
+        </section>
+
+        {/* FAQ Section */}
+        <section className="w-full max-w-7xl mx-auto px-8 pb-20">
+          <div className="mb-10 text-center scroll-animate">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2"><span className="text-blue-600">Frequently</span> Asked Questions</h2>
+            <p className="text-lg text-gray-700">Still have any questions? Contact our team at support@midwesternbank.com</p>
           </div>
-        </div>
-      </section>
-      {/* Footer Section */}
-      <footer className="w-full bg-[#181818] border-t border-[#232323] py-10 mt-0">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3 mb-4 md:mb-0">
-            {/* Placeholder logo */}
-            <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="64" height="64" rx="16" fill="#B6FF48"/>
-              <path d="M32 16L48 32L32 48L16 32L32 16Z" fill="#181818"/>
-              <path d="M32 24L40 32L32 40L24 32L32 24Z" fill="#B6FF48"/>
-            </svg>
-            <span className="text-lg font-bold text-white tracking-tight">Mid Western Bank</span>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* FAQ 1 */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg scroll-animate stagger-item-1 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <div className="flex items-center gap-2 mb-2">
+                <HelpCircle size={20} color="#0000FF" />
+                <h3 className="text-lg font-bold text-black">How do I open an account with Mid Western Bank?</h3>
+              </div>
+              <p className="text-gray-700 text-sm">Open an account with us. Simply visit our website and click on the 'Open Account' button. Fill out the required details and provide necessary documentation. For any assistance, our customer support team is available to help.</p>
+            </div>
+            
+            {/* FAQ 2 */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg scroll-animate stagger-item-2 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <div className="flex items-center gap-2 mb-2">
+                <HelpCircle size={20} color="#0000FF" />
+                <h3 className="text-lg font-bold text-black">What documents do I need to provide to apply for a loan?</h3>
+              </div>
+              <p className="text-gray-700 text-sm">The documents required for a loan application may vary depending on the type of loan you are applying for. Generally, you will need to provide identification, proof of income, and other relevant documents. Our team will guide you through the specific requirements during the application process.</p>
+            </div>
+            
+            {/* FAQ 3 */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg scroll-animate stagger-item-3 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <div className="flex items-center gap-2 mb-2">
+                <HelpCircle size={20} color="#0000FF" />
+                <h3 className="text-lg font-bold text-black">How can I access my accounts online?</h3>
+              </div>
+              <p className="text-gray-700 text-sm">Access your accounts online by visiting our website and clicking on the 'Login' button. Enter your credentials to securely view your account information, make transactions, and manage your finances.</p>
+            </div>
+            
+            {/* FAQ 4 */}
+            <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg scroll-animate stagger-item-4 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+              <div className="flex items-center gap-2 mb-2">
+                <HelpCircle size={20} color="#0000FF" />
+                <h3 className="text-lg font-bold text-black">Are my transactions and personal information secure?</h3>
+              </div>
+              <p className="text-gray-700 text-sm">At Mid Western Bank, the security of your transactions and personal information is our top priority. We employ advanced security measures and encryption to safeguard your data.</p>
+            </div>
           </div>
-          <nav className="flex gap-6 text-white text-sm font-medium mb-4 md:mb-0">
-            <a href="#" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="#" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="#" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="#" className="hover:text-[#B6FF48] transition">Security</a>
-          </nav>
-          <div className="text-[#ededed] text-xs text-center md:text-right">© 2025 Mid Western Bank. All rights reserved.</div>
-        </div>
-      </footer>
-    </div>
+          
+          <div className="flex justify-center mt-8">
+            <button className="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-500 transition">Load All FAQs →</button>
+          </div>
+        </section>
+
+        {/* Testimonials Section */}
+        <section className="w-full max-w-7xl mx-auto px-8 pb-20">
+          <div className="mb-10 text-center scroll-animate">
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2">Our <span className="text-blue-600">Testimonials</span></h2>
+            <p className="text-lg text-gray-700">Discover how Mid Western Bank has transformed lives with innovative digital solutions and personalized customer service. See why our clients trust us for a secure and prosperous financial journey.</p>
+          </div>
+          
+          <div className="flex flex-col items-center gap-8">
+            {/* Slideshow/Carousel for testimonials */}
+            <div className="w-full flex justify-center">
+              <div className="relative w-full max-w-md">
+                <div className="bg-white border border-blue-100 rounded-2xl p-8 shadow-lg scroll-animate flex flex-col items-center">
+                  <div className="mb-4 flex items-center justify-center">
+                    <Star size={32} color="#0000FF" fill="#0000FF" />
+                  </div>
+                  <p className="text-gray-700 text-base mb-4 text-center">{testimonials[testimonialIndex].text}</p>
+                  <div className="text-blue-600 font-bold">{testimonials[testimonialIndex].author}</div>
+                </div>
+                
+                {/* Carousel controls overlayed */}
+                <div className="absolute top-1/2 left-0 -translate-y-1/2 flex items-center w-full justify-between px-2 pointer-events-none">
+                  <button onClick={handlePrevTestimonial} className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center pointer-events-auto hover:bg-blue-500 transition">
+                    <ArrowLeft size={18} color="#fff" />
+                  </button>
+                  <button onClick={handleNextTestimonial} className="w-8 h-8 rounded-full bg-white border border-blue-600 flex items-center justify-center pointer-events-auto hover:bg-blue-50 transition">
+                    <ArrowRight size={18} color="#0000FF" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            {/* Dots for navigation */}
+            <div className="flex gap-2 mt-2">
+              {testimonials.map((_, idx) => (
+                <button
+                  key={idx}
+                  className={`w-2.5 h-2.5 rounded-full transition ${testimonialIndex === idx ? 'bg-blue-600' : 'bg-blue-200'}`}
+                  onClick={() => setTestimonialIndex(idx)}
+                  aria-label={`Go to testimonial ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="w-full max-w-4xl mx-auto px-8 pb-20">
+          <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-xl p-10 flex flex-col items-center text-center overflow-hidden">
+            {/* Animated background elements */}
+            <div className="absolute inset-0 opacity-10">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-32 h-32 border-2 border-white rounded-full"
+                  style={{
+                    left: `${20 * i}%`,
+                    top: `${Math.random() * 100}%`,
+                    animation: `float ${8 + i * 2}s ease-in-out infinite`,
+                    animationDelay: `${i * 0.5}s`
+                  }}
+                />
+              ))}
+            </div>
+            
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+              <p className="text-white/90 text-lg mb-6">Join thousands of satisfied customers who trust Mid Western Bank for their financial needs.</p>
+              <button className="px-8 py-3 rounded-full bg-white text-blue-600 font-bold hover:bg-blue-50 transition hover:scale-105 transform">
+                Open Account Today
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer Section */}
+        <footer className="w-full bg-[#181818] border-t border-[#232323] py-10 mt-0">
+          <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3 mb-4 md:mb-0">
+              {/* Logo */}
+              <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="64" height="64" rx="16" fill="#0000FF"/>
+                <path d="M32 16L48 32L32 48L16 32L32 16Z" fill="#ffffff"/>
+                <path d="M32 24L40 32L32 40L24 32L32 24Z" fill="#0000FF"/>
+              </svg>
+              <span className="text-lg font-bold text-white tracking-tight">Mid Western Bank</span>
+            </div>
+            
+            <nav className="flex gap-6 text-white text-sm font-medium mb-4 md:mb-0">
+              <a href="#" className="hover:text-blue-400 transition">Home</a>
+              <a href="#" className="hover:text-blue-400 transition">Careers</a>
+              <a href="#" className="hover:text-blue-400 transition">About</a>
+              <a href="#" className="hover:text-blue-400 transition">Security</a>
+            </nav>
+            
+            <div className="text-gray-400 text-xs text-center md:text-right">© 2025 Mid Western Bank. All rights reserved.</div>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 }

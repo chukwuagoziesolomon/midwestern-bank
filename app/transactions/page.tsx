@@ -34,11 +34,13 @@ const transactions = [
 
 export default function Transactions() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#181818] via-[#232323] to-[#101010] font-sans text-white flex flex-col md:flex-row">
+    <div className="min-h-screen bg-white font-sans text-black flex flex-col md:flex-row">
       {/* Sidebar for desktop, overlay for mobile */}
       <div className={`fixed inset-0 z-40 md:hidden transition ${sidebarOpen ? "block" : "hidden"}`}>
-        <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+        <div className="absolute inset-0 bg-black/10" onClick={() => setSidebarOpen(false)} />
         <div className="relative z-50 w-64 h-full">
           <Sidebar active="transactions" onClose={() => setSidebarOpen(false)} />
         </div>
@@ -49,30 +51,30 @@ export default function Transactions() {
       <main className="flex-1 p-4 md:p-10">
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden fixed top-4 left-4 z-50 bg-[#232323] border border-[#B6FF48] rounded-full p-2 shadow-lg focus:outline-none"
+          className="md:hidden fixed top-4 left-4 z-50 bg-white border border-[#0000FF] rounded-full p-2 shadow-lg focus:outline-none"
           onClick={() => setSidebarOpen(true)}
           aria-label="Open sidebar"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#B6FF48]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#0000FF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <div className="bg-[#232323]/80 rounded-2xl p-4 md:p-10 shadow-2xl border border-[#232323] flex flex-col gap-8 relative overflow-hidden">
-          <div className="text-lg font-bold mb-4 text-[#B6FF48] relative z-10 flex items-center gap-2"><TrendingUp size={24} /> Transaction History</div>
+        <div className="bg-white rounded-2xl p-4 md:p-10 shadow-2xl border border-[#0000FF] flex flex-col gap-8 relative overflow-hidden">
+          <div className="text-lg font-bold mb-4 text-[#0000FF] italic relative z-10 flex items-center gap-2"><TrendingUp size={24} color="#0000FF" /> Transaction History</div>
           <div className="flex flex-col gap-6 relative z-10">
             <div className="overflow-x-auto">
-              <table className="min-w-full bg-[#232323]/80 rounded-xl shadow-2xl border border-[#232323] text-white text-xs md:text-sm">
+              <table className="min-w-full bg-white rounded-xl shadow-2xl border border-[#0000FF] text-black text-xs md:text-sm">
                 <thead>
-                  <tr className="border-b border-[#2a2a2a] bg-transparent">
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">#</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">STATUS</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">DATE</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">DESCRIPTION</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">CATEGORY</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">AMOUNT</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">RECEIVER NAME</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]">RECEIVER BANK</th>
-                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#B6FF48]"> </th>
+                  <tr className="border-b border-[#0000FF] bg-transparent">
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">#</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">STATUS</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">DATE</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">DESCRIPTION</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">CATEGORY</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">AMOUNT</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">RECEIVER NAME</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic">RECEIVER BANK</th>
+                    <th className="px-2 md:px-4 py-2 text-left font-semibold text-[#0000FF] italic"> </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -170,7 +172,7 @@ export default function Transactions() {
                     },
                   ].map((tx, i) => (
                     <tr key={i} className="border-b border-[#e5e5e5] hover:bg-[#f6f6f6]">
-                      <td className="px-2 md:px-4 py-2 font-bold text-[#232323]">{i + 1}</td>
+                      <td className="px-2 md:px-4 py-2 font-bold text-black">{i + 1}</td>
                       <td className="px-2 md:px-4 py-2">
                         <span className="flex items-center gap-2">
                           <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
@@ -188,7 +190,14 @@ export default function Transactions() {
                       <td className={`px-2 md:px-4 py-2 font-bold ${tx.category === "credit" ? "text-green-600" : "text-red-600"}`}>{tx.amount}</td>
                       <td className="px-2 md:px-4 py-2">{tx.receiver}</td>
                       <td className="px-2 md:px-4 py-2">{tx.bank}</td>
-                      <td className="px-2 md:px-4 py-2"><button className="bg-blue-600 text-white px-4 py-1 rounded-full text-xs font-semibold">View</button></td>
+                      <td className="px-2 md:px-4 py-2">
+                        <button
+                          className="bg-[#0000FF] text-white px-4 py-1 rounded-full text-xs font-semibold block w-full text-center"
+                          onClick={() => { setSelectedTx(tx); setIsModalOpen(true); }}
+                        >
+                          View
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -197,6 +206,71 @@ export default function Transactions() {
           </div>
         </div>
       </main>
+      {/* Modal for transaction details */}
+      {isModalOpen && selectedTx && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
+          <div className="relative bg-white rounded-t-3xl md:rounded-3xl shadow-2xl p-4 md:p-8 w-full max-w-lg mx-auto h-full md:h-auto overflow-y-auto transform transition-all duration-300 scale-100 opacity-100 flex flex-col justify-between">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-2 hover:bg-gray-100 rounded-full transition-all"
+            >
+              <span className="text-gray-600 text-xl">&times;</span>
+            </button>
+            <div className="mb-6">
+              <h2 className="text-xl md:text-2xl font-bold text-black mb-2">Transaction Details</h2>
+              <p className="text-gray-600 text-sm md:text-base">Complete information about this transaction</p>
+            </div>
+            <div className={`mb-8 p-6 rounded-2xl text-center ${selectedTx.category === "credit" ? "bg-green-50" : "bg-red-50"}`}>
+              <div className="text-gray-600 text-xs md:text-sm uppercase mb-2">Amount</div>
+              <div className={`text-3xl md:text-4xl font-bold ${selectedTx.category === "credit" ? "text-green-600" : "text-red-600"}`}>
+                {selectedTx.category === "credit" ? "+" : "-"}{selectedTx.amount}
+              </div>
+            </div>
+            <div className="space-y-4 mb-8">
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4 p-3 md:p-4 bg-blue-50 rounded-2xl">
+                <div className="flex-1">
+                  <div className="text-xs md:text-sm text-gray-600 uppercase mb-1">Date & Time</div>
+                  <div className="font-semibold text-black">{selectedTx.date}</div>
+                  <div className="text-xs md:text-sm text-gray-600">{selectedTx.time}</div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4 p-3 md:p-4 bg-purple-50 rounded-2xl">
+                <div className="flex-1">
+                  <div className="text-xs md:text-sm text-gray-600 uppercase mb-1">Description</div>
+                  <div className="font-semibold text-black">{selectedTx.description}</div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4 p-3 md:p-4 bg-yellow-50 rounded-2xl">
+                <div className="flex-1">
+                  <div className="text-xs md:text-sm text-gray-600 uppercase mb-1">Category</div>
+                  <div className="font-semibold text-black capitalize">{selectedTx.category}</div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4 p-3 md:p-4 bg-indigo-50 rounded-2xl">
+                <div className="flex-1">
+                  <div className="text-xs md:text-sm text-gray-600 uppercase mb-1">Receiver Name</div>
+                  <div className="font-semibold text-black">{selectedTx.receiver}</div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:gap-4 p-3 md:p-4 bg-cyan-50 rounded-2xl">
+                <div className="flex-1">
+                  <div className="text-xs md:text-sm text-gray-600 uppercase mb-1">Receiver Bank</div>
+                  <div className="font-semibold text-black">{selectedTx.bank}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-black font-semibold rounded-xl transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
