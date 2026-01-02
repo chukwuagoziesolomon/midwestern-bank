@@ -4,7 +4,9 @@ import Image from "next/image";
 import { CreditCard, PiggyBank, Home as LucideHome, User, Users, Shield, Briefcase, MessageSquare, ArrowRight, ArrowLeft, Star, HelpCircle, Smartphone, BarChart, Headphones, Clock, ShieldCheck, Send, GraduationCap, Banknote, Wallet, TrendingUp, Briefcase as LucideBriefcase, TrendingDown, DollarSign, ArrowUpRight, Sparkles } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+// import { useTranslation } from "@/lib/TranslationContext";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 // Scroll Observer Hook
 const useScrollAnimation = () => {
@@ -131,11 +133,11 @@ export default function Home() {
   const [useCaseTab, setUseCaseTab] = useState<"individual" | "business">("individual");
   const [scrollY, setScrollY] = useState(0);
   
-  // Multi-phrase typewriter effect
+  // Multi-phrase typewriter effect (hardcoded English, Google Translate will handle translation)
   const typedText = useTypewriter([
-    "Your Financial Future Starts Here",
-    "Banking Made Simple & Secure",
-    "Empowering Your Dreams"
+    'Banking made simple for everyone.',
+    'Your trusted partner in finance.',
+    'Secure. Reliable. Global.'
   ], 100, 2000);
   
   // Parallax effect
@@ -227,7 +229,7 @@ export default function Home() {
           </div>
           
           {/* Hero content with stunning animations */}
-          <div className="relative z-10 text-center text-white px-8 max-w-6xl">
+          <div className="relative z-10 text-center text-white px-8 max-w-6xl pt-32">
             {/* Sparkle icon */}
             <div className="flex justify-center mb-6">
               <div className="relative">
@@ -239,7 +241,7 @@ export default function Home() {
             {/* Main headline with typewriter */}
             <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
               <span className="inline-block bg-gradient-to-r from-white via-blue-200 to-white bg-clip-text text-transparent">
-                Welcome to
+                Welcome to YourBank
               </span>
               <br />
               <span className="inline-block bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400 bg-clip-text text-transparent">
@@ -259,7 +261,7 @@ export default function Home() {
             <div className="flex justify-center mb-16">
               <button className="group relative px-12 py-5 rounded-full shimmer-button text-white font-bold text-xl shadow-2xl hover:scale-105 transition-all duration-300 glow-effect overflow-hidden">
                 <span className="relative z-10 flex items-center gap-3">
-                  Open Your Account
+                  Get Started
                   <ArrowUpRight className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </span>
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
@@ -629,29 +631,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer Section */}
-        <footer className="w-full bg-[#181818] border-t border-[#232323] py-10 mt-0">
-          <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-3 mb-4 md:mb-0">
-              {/* Logo */}
-              <svg width="32" height="32" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="64" height="64" rx="16" fill="#0000FF"/>
-                <path d="M32 16L48 32L32 48L16 32L32 16Z" fill="#ffffff"/>
-                <path d="M32 24L40 32L32 40L24 32L32 24Z" fill="#0000FF"/>
-              </svg>
-              <span className="text-lg font-bold text-white tracking-tight">Mid Western Bank</span>
-            </div>
-            
-            <nav className="flex gap-6 text-white text-sm font-medium mb-4 md:mb-0">
-              <a href="#" className="hover:text-blue-400 transition">Home</a>
-              <a href="#" className="hover:text-blue-400 transition">Careers</a>
-              <a href="#" className="hover:text-blue-400 transition">About</a>
-              <a href="#" className="hover:text-blue-400 transition">Security</a>
-            </nav>
-            
-            <div className="text-gray-400 text-xs text-center md:text-right">© 2025 Mid Western Bank. All rights reserved.</div>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </>
   );

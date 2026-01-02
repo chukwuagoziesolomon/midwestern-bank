@@ -1,12 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeft, Quote } from "lucide-react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Image from "next/image";
+import { apiClient } from "@/lib/api";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function SignUp() {
-  const [tab, setTab] = useState<"individual" | "business">("individual");
+    const router = useRouter();
+    const { login } = useAuth();
+    const [tab, setTab] = useState<"individual" | "business">("individual");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
   const testimonials = {
     individual: [
       {
@@ -26,6 +38,38 @@ export default function SignUp() {
     ]
   };
 
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await apiClient.signup({
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
+      });
+      if (response.error) {
+        setError(response.error);
+      } else if (response.data) {
+        // After signup, automatically log in
+        const loginResponse = await apiClient.login({ email, password });
+        if (loginResponse.error) {
+          setError("Account created but login failed. Please try logging in manually.");
+        } else if (loginResponse.data) {
+          login(loginResponse.data.user);
+          router.push('/dashboard');
+        }
+      }
+    } catch (err) {
+      setError("An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-black">
       {/* Header/Navbar */}
@@ -35,16 +79,51 @@ export default function SignUp() {
         <div className="max-w-xl w-full bg-white border border-[#0000FF] rounded-2xl shadow-xl p-10 flex flex-col items-center gap-6">
           <h1 className="text-3xl md:text-4xl font-bold mb-2 text-[#0000FF] italic">Sign Up</h1>
           <p className="text-black mb-4">Join our community today. Create an account to unlock exclusive features and personalized experiences.</p>
-          <form className="w-full flex flex-col gap-4">
+          <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <input type="text" placeholder="Enter First Name" className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none" />
-              <input type="text" placeholder="Enter Last Name" className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none" />
+              <input
+                type="text"
+                placeholder="Enter First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
+                required
+              />
+              <input
+                type="text"
+                placeholder="Enter Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
+                required
+              />
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <input type="email" placeholder="Enter your Email" className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none" />
-              <input type="password" placeholder="Enter your Password" className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none" />
+              <input
+                type="email"
+                placeholder="Enter your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Enter your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
+                required
+              />
             </div>
-            <button type="submit" className="w-full px-6 py-3 rounded-full bg-[#0000FF] text-white font-bold text-lg shadow-lg hover:bg-[#5a8cff] transition">Sign Up</button>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-6 py-3 rounded-full bg-[#0000FF] text-white font-bold text-lg shadow-lg hover:bg-[#5a8cff] transition disabled:opacity-50"
+            >
+              {loading ? "Signing up..." : "Sign Up"}
+            </button>
             <Link href="/login" className="w-full px-6 py-3 rounded-full bg-white text-[#0000FF] font-bold text-lg shadow-lg hover:bg-[#5a8cff] hover:text-white transition flex items-center justify-center">Login</Link>
           </form>
           <div className="w-full flex flex-col items-center gap-2 mt-4">
@@ -82,33 +161,7 @@ export default function SignUp() {
           </div>
         </div>
       </section>
-      {/* Footer Section */}
-      <footer className="w-full bg-[#232323] border-t border-[#232323] py-10 mt-0">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3 mb-4 md:mb-0">
-            <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center">
-              <Image src="/logo.svg" alt="YourBank Logo" width={28} height={28} />
-            </span>
-            <span className="text-lg font-bold text-white tracking-tight">YourBank</span>
-          </div>
-          <nav className="flex gap-6 text-white text-sm font-medium mb-4 md:mb-0">
-            <a href="/" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="/careers" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="/about" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="/security" className="hover:text-[#B6FF48] transition">Security</a>
-          </nav>
-          <div className="text-[#ededed] text-xs text-center md:text-right">© 2025 YourBank. All rights reserved.</div>
-        </div>
-        <div className="flex justify-center gap-4 mt-6">
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-        </div>
-        <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-xs text-[#ededed] gap-2">
-          <span>YourBank. All Rights Reserved.</span>
-          <span>Privacy Policy | Terms of Service</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,7 +1,9 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api";
+import { useAuth } from "@/lib/AuthContext";
 
 type TransactionType = {
   status: string;
@@ -15,6 +17,7 @@ type TransactionType = {
 };
 import { TrendingUp, User, Banknote } from "lucide-react";
 import Link from "next/link";
+import Footer from "../components/Footer";
 
 const transactions = [
   {
@@ -44,9 +47,51 @@ const transactions = [
 ];
 
 export default function Transactions() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedTx, setSelectedTx] = useState<TransactionType | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+   const { user } = useAuth();
+   const [sidebarOpen, setSidebarOpen] = useState(false);
+   const [selectedTx, setSelectedTx] = useState<TransactionType | null>(null);
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [transactions, setTransactions] = useState<TransactionType[]>([]);
+   const [error, setError] = useState("");
+
+   useEffect(() => {
+     if (user) {
+       fetchTransactions();
+     }
+   }, [user]);
+
+   const fetchTransactions = async () => {
+     if (!user) return;
+
+     setError("");
+
+     try {
+       const response = await apiClient.getTransfers(user.id);
+       if (response.error) {
+         setError(response.error);
+       } else if (response.data && Array.isArray(response.data)) {
+         // Map API response to expected format
+         const mappedTransactions = response.data.map((transfer: any) => ({
+           status: transfer.status === 'completed' ? 'Successful' : transfer.status,
+           date: new Date(transfer.date).toLocaleDateString('en-US', {
+             weekday: 'long',
+             month: 'short',
+             day: 'numeric',
+             year: 'numeric'
+           }),
+           time: new Date(transfer.date).toLocaleTimeString(),
+           description: transfer.description,
+           category: 'debit', // Assuming all transfers are debits for now
+           amount: `$ ${parseFloat(transfer.amount).toFixed(2)}`,
+           receiver: transfer.receiver_name,
+           bank: transfer.receiver_bank,
+         }));
+         setTransactions(mappedTransactions);
+       }
+     } catch (err) {
+       setError("Failed to fetch transactions");
+     }
+   };
   return (
     <div className="min-h-screen bg-white font-sans text-black flex flex-col md:flex-row">
       {/* Sidebar for desktop, overlay for mobile */}
@@ -89,99 +134,20 @@ export default function Transactions() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Example rows, replace with dynamic data as needed */}
-                  {[
-                    {
-                      status: "Successful",
-                      date: "Tuesday Aug 26th 2025",
-                      time: "12:10:00 PM",
-                      description: "Payment for materials - in5UZn2493",
-                      category: "credit",
-                      amount: "$ 120,000",
-                      receiver: "Michael Philip",
-                      bank: "U.S Bank",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Thursday Aug 28th 2025",
-                      time: "02:18:00 PM",
-                      description: "Purchased materials - smTRRvqJQV",
-                      category: "debit",
-                      amount: "$ 100,000",
-                      receiver: "Aleksander Andriy",
-                      bank: "Santander Group",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Friday Aug 29th 2025",
-                      time: "09:14:00 AM",
-                      description: "Payment of workers - DMF0RVFOpL",
-                      category: "credit",
-                      amount: "$ 20,000",
-                      receiver: "Griggs Robinson",
-                      bank: "Wells Fargo",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Monday Sep 1st 2025",
-                      time: "09:16:00 AM",
-                      description: "Payment for work done - carKfoYsR2",
-                      category: "debit",
-                      amount: "$ 20,000",
-                      receiver: "Keith Peters",
-                      bank: "Santander Group",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Tuesday Sep 2nd 2025",
-                      time: "09:21:00 AM",
-                      description: "ATM withdrawal - EnTvPFWzeY",
-                      category: "debit",
-                      amount: "$ 1,550",
-                      receiver: "Peter Adams",
-                      bank: "Crédit Agricole",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Thursday Sep 4th 2025",
-                      time: "04:23:00 PM",
-                      description: "ATM withdrawal - luN0rS8ZFs",
-                      category: "debit",
-                      amount: "$ 4,000",
-                      receiver: "James Alderman",
-                      bank: "Crédit Agricole",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Saturday Sep 6th 2025",
-                      time: "12:08:00 PM",
-                      description: "Bills - kkqys95gH2",
-                      category: "debit",
-                      amount: "$ 2,550",
-                      receiver: "Thomas Carter",
-                      bank: "Crédit Agricole",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Sunday Sep 7th 2025",
-                      time: "03:03:00 PM",
-                      description: "ATM withdrawal - AQiptGRDLp",
-                      category: "debit",
-                      amount: "$ 3,500",
-                      receiver: "Charles Williams",
-                      bank: "BNP Paribas",
-                    },
-                    {
-                      status: "Successful",
-                      date: "Saturday Nov 22nd 2025",
-                      time: "09:33:51 AM",
-                      description: "Shops,Handbag ans Clothes - bxA1VJpg5F",
-                      category: "debit",
-                      amount: "$ 4,730",
-                      receiver: "Maria Resiana Simamora",
-                      bank: "Vakif Bank",
-                    },
-                  ].map((tx, i) => (
+                  {error ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-8 text-center text-red-500">
+                        {error}
+                      </td>
+                    </tr>
+                  ) : transactions.length === 0 ? (
+                    <tr>
+                      <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
+                        No transactions found.
+                      </td>
+                    </tr>
+                  ) : (
+                    transactions.map((tx, i) => (
                     <tr key={i} className="border-b border-[#e5e5e5] hover:bg-[#f6f6f6]">
                       <td className="px-2 md:px-4 py-2 font-bold text-black">{i + 1}</td>
                       <td className="px-2 md:px-4 py-2">
@@ -210,7 +176,8 @@ export default function Transactions() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -282,6 +249,7 @@ export default function Transactions() {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 }

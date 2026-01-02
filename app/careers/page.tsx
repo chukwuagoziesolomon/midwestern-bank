@@ -3,6 +3,7 @@
 import { Briefcase, HeartPulse, PiggyBank, Users, Award, ShieldCheck, CheckCircle, HelpCircle, Star } from "lucide-react";
 import Image from "next/image";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Careers() {
   return (
@@ -177,33 +178,7 @@ export default function Careers() {
           <button className="px-8 py-3 rounded-full bg-blue-600 text-white font-bold text-lg shadow-lg hover:bg-blue-500 transition">Open Account</button>
         </div>
       </section>
-      {/* Footer Section */}
-      <footer className="w-full bg-[#232323] border-t border-[#232323] py-10 mt-0">
-        <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-3 mb-4 md:mb-0">
-            <span className="inline-block w-10 h-10 rounded-full bg-[#B6FF48] flex items-center justify-center">
-              <Briefcase size={28} color="#232323" />
-            </span>
-            <span className="text-lg font-bold text-white tracking-tight">YourBank</span>
-          </div>
-          <nav className="flex gap-6 text-white text-sm font-medium mb-4 md:mb-0">
-            <a href="/" className="hover:text-[#B6FF48] transition">Home</a>
-            <a href="/careers" className="hover:text-[#B6FF48] transition">Careers</a>
-            <a href="/about" className="hover:text-[#B6FF48] transition">About</a>
-            <a href="/security" className="hover:text-[#B6FF48] transition">Security</a>
-          </nav>
-          <div className="text-[#ededed] text-xs text-center md:text-right">© 2025 YourBank. All rights reserved.</div>
-        </div>
-        <div className="flex justify-center gap-4 mt-6">
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-          <a href="#" className="w-8 h-8 rounded-full bg-[#B6FF48] flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#232323" /></svg></a>
-        </div>
-        <div className="flex flex-col md:flex-row justify-between items-center mt-6 text-xs text-[#ededed] gap-2">
-          <span>YourBank. All Rights Reserved.</span>
-          <span>Privacy Policy | Terms of Service</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

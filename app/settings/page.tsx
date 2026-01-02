@@ -1,17 +1,75 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
-import { useState } from "react";
+import Footer from "../components/Footer";
+import { useState, useEffect } from "react";
+import { apiClient } from "@/lib/api";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Settings() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("neumannmabel001@gmail.com");
-  const [profilePic, setProfilePic] = useState<string | null>(null);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  return (
+   const { user } = useAuth();
+   const [userData, setUserData] = useState<any>(null);
+   const [error, setError] = useState("");
+   const [success, setSuccess] = useState("");
+   const [profilePic, setProfilePic] = useState<string | null>(null);
+   const [currentPassword, setCurrentPassword] = useState("");
+   const [newPassword, setNewPassword] = useState("");
+   const [confirmPassword, setConfirmPassword] = useState("");
+   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+   useEffect(() => {
+     if (user) {
+       fetchUserData();
+     }
+   }, [user]);
+
+   const fetchUserData = async () => {
+     if (!user) return;
+ 
+     try {
+       const response = await apiClient.getSettings(user.id);
+       if (response.data) {
+         setUserData(response.data);
+       }
+     } catch (error) {
+       console.error('Error fetching user data:', error);
+     }
+   };
+
+   const handlePasswordChange = async (e: React.FormEvent) => {
+     e.preventDefault();
+     if (!user) return;
+
+     setError("");
+     setSuccess("");
+
+     if (newPassword !== confirmPassword) {
+       setError("New passwords do not match");
+       return;
+     }
+
+     try {
+       const response = await apiClient.updatePassword({
+         user_id: user.id,
+         current_password: currentPassword,
+         new_password: newPassword,
+         confirm_password: confirmPassword,
+       });
+
+       if (response.error) {
+         setError(response.error);
+       } else {
+         setSuccess("Password changed successfully!");
+         setCurrentPassword("");
+         setNewPassword("");
+         setConfirmPassword("");
+       }
+     } catch (err) {
+       setError("An unexpected error occurred");
+     }
+   };
+
+   return (
     <div className="min-h-screen bg-white font-sans text-black flex flex-col md:flex-row">
       {/* Sidebar for desktop, overlay for mobile */}
       <div className={`fixed inset-0 z-40 md:hidden transition ${sidebarOpen ? "block" : "hidden"}`}>
@@ -61,10 +119,20 @@ export default function Settings() {
               <div className="flex-1 w-full">
                 <div className="flex flex-col gap-4">
                   <label className="text-gray-700">Name
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none" />
+                    <input
+                      type="text"
+                      value={userData ? `${userData.first_name} ${userData.last_name}` : ''}
+                      readOnly
+                      className="mt-1 w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-600 text-black placeholder-gray-400 focus:outline-none"
+                    />
                   </label>
                   <label className="text-gray-700">Email
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none" />
+                    <input
+                      type="email"
+                      value={userData?.email || ''}
+                      readOnly
+                      className="mt-1 w-full px-4 py-3 rounded-lg bg-gray-100 border border-blue-600 text-black placeholder-gray-400 focus:outline-none"
+                    />
                   </label>
                 </div>
               </div>
@@ -74,18 +142,43 @@ export default function Settings() {
           <div className="bg-white rounded-2xl p-8 shadow-2xl border border-gray-200 mb-4">
             <h2 className="text-xl font-bold mb-2 text-blue-600">Update Password</h2>
             <p className="text-gray-700 mb-6">Ensure your account is using a long, random password to stay secure.</p>
-            <div className="flex flex-col gap-4">
+            <form onSubmit={handlePasswordChange} className="flex flex-col gap-4">
               <label className="text-gray-700">Current Password
-                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none" />
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none"
+                  required
+                />
               </label>
               <label className="text-gray-700">New Password
-                <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none" />
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none"
+                  required
+                />
               </label>
               <label className="text-gray-700">Confirm Password
-                <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none" />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  className="mt-1 w-full px-4 py-3 rounded-lg bg-white border border-blue-600 text-black placeholder-gray-400 focus:outline-none"
+                  required
+                />
               </label>
-              <button className="w-32 mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white font-bold text-lg shadow-lg hover:bg-blue-500 transition self-end">Save</button>
-            </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {success && <p className="text-green-500 text-sm">{success}</p>}
+              <button
+                type="submit"
+                className="w-32 mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white font-bold text-lg shadow-lg hover:bg-blue-500 transition self-end disabled:opacity-50"
+              >
+                Save
+              </button>
+            </form>
           </div>
           {/* Two Factor Authentication */}
           <div className="bg-white rounded-2xl p-8 shadow-2xl border border-gray-200">
@@ -95,6 +188,7 @@ export default function Settings() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
