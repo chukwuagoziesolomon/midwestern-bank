@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Send, Banknote } from "lucide-react";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -417,7 +416,6 @@ export default function Transfer() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

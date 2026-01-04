@@ -1,7 +1,6 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
@@ -188,7 +187,6 @@ export default function Settings() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

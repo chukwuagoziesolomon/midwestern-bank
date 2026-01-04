@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { Wallet, Send, TrendingUp, CreditCard, Banknote, User, ArrowRight } from "lucide-react";
 
 export default function Sidebar({ active, onClose }: { active?: string; onClose?: () => void }) {
@@ -17,11 +18,8 @@ export default function Sidebar({ active, onClose }: { active?: string; onClose?
           </svg>
         </button>
       )}
-      <div className="flex items-center gap-3 mb-10">
-        <span className="inline-block w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow-lg">
-          <Wallet size={28} color="#fff" />
-        </span>
-        <span className="text-xl font-bold tracking-tight text-black">YourBank</span>
+      <div className="flex items-center justify-center mb-10">
+        <Image src="/logo.png" alt="Logo" width={40} height={40} />
       </div>
       <nav className="flex-1">
         <div className="mb-6">

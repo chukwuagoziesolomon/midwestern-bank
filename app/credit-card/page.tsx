@@ -1,7 +1,6 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import { useState } from "react";
 import Link from "next/link";
 import { CreditCard, Banknote } from "lucide-react";
@@ -148,7 +147,6 @@ export default function CreditCardPage() {
           </form>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

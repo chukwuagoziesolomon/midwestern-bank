@@ -1,7 +1,6 @@
 
 "use client";
 import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -223,7 +222,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2">
                       <div className="w-12 h-8 bg-white rounded-lg" />
                     </div>
-                    <div className="text-white text-xs font-bold tracking-wider uppercase">HERITAGE REMIT BANK</div>
+                    <div className="text-white text-xs font-bold tracking-wider uppercase">MID WESTERN BANK</div>
                   </div>
                   
                   <div className="text-white text-3xl font-mono tracking-widest mb-12 font-bold">
@@ -514,7 +513,6 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }

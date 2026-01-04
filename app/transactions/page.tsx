@@ -17,7 +17,6 @@ type TransactionType = {
 };
 import { TrendingUp, User, Banknote } from "lucide-react";
 import Link from "next/link";
-import Footer from "../components/Footer";
 
 const transactions = [
   {
@@ -249,7 +248,7 @@ export default function Transactions() {
           </div>
         </div>
       )}
-      <Footer />
+      
     </div>
   );
 }
