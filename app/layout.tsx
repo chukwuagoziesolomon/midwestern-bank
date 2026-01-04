@@ -5,7 +5,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import { LoadingProvider } from "@/lib/LoadingContext";
 import GlobalLoader from "./components/GlobalLoader";
 import LoadingInitializer from "./components/LoadingInitializer";
-// GoogleTranslateLoader will be loaded in Navbar
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,8 +40,10 @@ export default function RootLayout({
           <LoadingInitializer />
           <AuthProvider>
             <TranslationProvider>
-              {children}
-              <GlobalLoader />
+              <ErrorBoundary>
+                {children}
+                <GlobalLoader />
+              </ErrorBoundary>
             </TranslationProvider>
           </AuthProvider>
         </LoadingProvider>

@@ -92,17 +92,41 @@ const FloatingStats = () => {
 
 // Animated Background Particles
 const ParticleField = () => {
+  // Predefined particle positions to avoid hydration mismatch
+  const particles = [
+    { left: 16.36, top: 13.85, duration: 13.52, delay: 1.56 },
+    { left: 59.47, top: 67.05, duration: 11.92, delay: 3.41 },
+    { left: 51.50, top: 76.04, duration: 11.91, delay: 3.46 },
+    { left: 21.90, top: 70.13, duration: 13.71, delay: 1.86 },
+    { left: 58.82, top: 85.71, duration: 10.77, delay: 0.88 },
+    { left: 82.83, top: 55.22, duration: 6.22, delay: 3.17 },
+    { left: 21.37, top: 95.14, duration: 14.52, delay: 3.47 },
+    { left: 58.98, top: 41.87, duration: 13.15, delay: 4.43 },
+    { left: 74.58, top: 68.61, duration: 5.33, delay: 1.53 },
+    { left: 68.34, top: 7.14, duration: 6.53, delay: 4.64 },
+    { left: 54.50, top: 26.59, duration: 7.90, delay: 2.69 },
+    { left: 16.19, top: 80.33, duration: 6.57, delay: 2.47 },
+    { left: 21.70, top: 20.23, duration: 6.73, delay: 4.48 },
+    { left: 91.59, top: 71.15, duration: 6.07, delay: 3.12 },
+    { left: 62.08, top: 56.33, duration: 6.80, delay: 0.94 },
+    { left: 30.26, top: 24.61, duration: 7.08, delay: 4.80 },
+    { left: 73.49, top: 38.23, duration: 10.28, delay: 3.89 },
+    { left: 5.49, top: 5.47, duration: 8.53, delay: 1.83 },
+    { left: 94.18, top: 70.20, duration: 12.03, delay: 1.57 },
+    { left: 20.84, top: 39.09, duration: 12.89, delay: 0.24 }
+  ];
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
+      {particles.map((particle, i) => (
         <div
           key={i}
           className="absolute w-2 h-2 bg-blue-400/30 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`
+            left: `${particle.left}%`,
+            top: `${particle.top}%`,
+            animation: `float ${particle.duration}s ease-in-out infinite`,
+            animationDelay: `${particle.delay}s`
           }}
         />
       ))}
@@ -211,7 +235,7 @@ export default function Home() {
       <div className="relative min-h-screen font-sans bg-white overflow-hidden">
         {/* Hero Section with enhanced effects */}
         <section 
-          className="relative w-full h-screen flex items-center justify-center bg-cover bg-center" 
+          className="relative w-full min-h-screen flex items-center justify-center bg-cover bg-center pt-20" 
           style={{ 
             backgroundImage: 'url(/Hero.png)',
             transform: `translateY(${scrollY * 0.5}px)`
@@ -229,7 +253,7 @@ export default function Home() {
           </div>
           
           {/* Hero content with stunning animations */}
-          <div className="relative z-10 text-center text-white px-8 max-w-6xl pt-32">
+          <div className="relative z-10 text-center text-white px-8 max-w-6xl pt-40 md:pt-32">
             {/* Sparkle icon */}
             <div className="flex justify-center mb-6">
               <div className="relative">
@@ -241,7 +265,7 @@ export default function Home() {
             {/* Main headline with typewriter */}
             <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight">
               <span className="inline-block bg-gradient-to-r from-white via-blue-200 to-white bg-clip-text text-transparent">
-                Welcome to YourBank
+                Welcome to
               </span>
               <br />
               <span className="inline-block bg-gradient-to-r from-blue-400 via-blue-600 to-blue-400 bg-clip-text text-transparent">
@@ -259,13 +283,15 @@ export default function Home() {
             
             {/* CTA Button with enhanced effects */}
             <div className="flex justify-center mb-16">
-              <button className="group relative px-12 py-5 rounded-full shimmer-button text-white font-bold text-xl shadow-2xl hover:scale-105 transition-all duration-300 glow-effect overflow-hidden">
-                <span className="relative z-10 flex items-center gap-3">
-                  Get Started
-                  <ArrowUpRight className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-              </button>
+              <Link href="/login">
+                <button className="group relative px-12 py-5 rounded-full shimmer-button text-white font-bold text-xl shadow-2xl hover:scale-105 transition-all duration-300 glow-effect overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Get Started
+                    <ArrowUpRight className="w-6 h-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                </button>
+              </Link>
             </div>
             
             {/* Floating stats cards */}
@@ -602,20 +628,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* CTA Section - FIXED BUBBLE POSITIONS */}
         <section className="w-full max-w-4xl mx-auto px-8 pb-20">
           <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl shadow-xl p-10 flex flex-col items-center text-center overflow-hidden">
-            {/* Animated background elements */}
+            {/* Animated background elements with FIXED positions */}
             <div className="absolute inset-0 opacity-10">
-              {[...Array(5)].map((_, i) => (
+              {[
+                { left: '0%', top: '20%', duration: 8, delay: 0 },
+                { left: '20%', top: '45%', duration: 10, delay: 0.5 },
+                { left: '40%', top: '65%', duration: 12, delay: 1 },
+                { left: '60%', top: '35%', duration: 14, delay: 1.5 },
+                { left: '80%', top: '55%', duration: 16, delay: 2 },
+              ].map((bubble, i) => (
                 <div
                   key={i}
                   className="absolute w-32 h-32 border-2 border-white rounded-full"
                   style={{
-                    left: `${20 * i}%`,
-                    top: `${Math.random() * 100}%`,
-                    animation: `float ${8 + i * 2}s ease-in-out infinite`,
-                    animationDelay: `${i * 0.5}s`
+                    left: bubble.left,
+                    top: bubble.top,
+                    animation: `float ${bubble.duration}s ease-in-out infinite`,
+                    animationDelay: `${bubble.delay}s`
                   }}
                 />
               ))}
