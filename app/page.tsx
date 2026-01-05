@@ -309,10 +309,15 @@ export default function Home() {
         {/* Products Section */}
         <section className="w-full max-w-7xl mx-auto px-8 py-20 relative">
           <div className="mb-10 text-left scroll-animate">
-            <h2 className="text-3xl md:text-4xl font-bold text-black mb-2">
-              Our <span className="text-blue-600 italic">Products</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
+              <span className="text-white">Our</span> <span className="text-blue-600 italic">Products</span>
             </h2>
-            <p className="text-lg text-gray-700 max-w-2xl">Discover a range of comprehensive and customizable banking products at Mid Western Bank, designed to suit your unique financial needs and aspirations.</p>
+            <div className="inline-block max-w-2xl bg-white/95 rounded-2xl shadow-lg border border-blue-100 px-6 py-4">
+              <p className="text-base md:text-lg text-gray-700">
+                Discover a range of comprehensive and customizable banking products at Mid Western Bank,
+                designed to suit your unique financial needs and aspirations.
+              </p>
+            </div>
           </div>
           
           {/* Toggle Buttons */}
