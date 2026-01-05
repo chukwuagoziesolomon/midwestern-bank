@@ -164,14 +164,11 @@ export default function GoogleTranslateLoader({
           display: none !important;
         }
 
-        /* Dropdown menu styling */
+        /* Dropdown menu styling - DESKTOP */
         .goog-te-menu-frame {
           border: 2px solid #e5e7eb !important;
           border-radius: 16px !important;
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-          max-height: 450px !important;
-          max-width: 400px !important;
-          overflow: hidden !important;
           background: white !important;
           animation: fadeInDown 0.3s ease-out !important;
         }
@@ -183,70 +180,11 @@ export default function GoogleTranslateLoader({
         .goog-te-menu2 {
           border: none !important;
           background: white !important;
-          max-height: 450px !important;
-          overflow-y: auto !important;
-          overflow-x: hidden !important;
           padding: 8px !important;
         }
 
-        /* Force single-column layout for ALL screen sizes (desktop + mobile) */
-        .goog-te-menu2 table {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-          table-layout: fixed !important;
-          border-collapse: separate !important;
-        }
-
-        .goog-te-menu2 tbody {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-        }
-
-        .goog-te-menu2 tr {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-          float: none !important;
-          clear: both !important;
-        }
-
-        .goog-te-menu2 td {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-          float: none !important;
-          clear: both !important;
-          padding: 0 !important;
-        }
-        
-        /* Override any inline styles Google might add - more aggressive */
-        .goog-te-menu2 td[style] {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-          float: none !important;
-        }
-        
-        .goog-te-menu2 tr[style] {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-          float: none !important;
-        }
-
-        .goog-te-menu2 table[style] {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
-        }
-        /* Language items with enhanced styling - SINGLE COLUMN */
+        /* Language items with enhanced styling */
         .goog-te-menu2-item {
-          width: 100% !important;
-          display: block !important;
-          box-sizing: border-box !important;
-          white-space: normal !important;
           padding: 14px 18px !important;
           margin: 3px 0 !important;
           font-size: 15px !important;
@@ -257,9 +195,6 @@ export default function GoogleTranslateLoader({
           cursor: pointer !important;
           font-family: inherit !important;
           border: none !important;
-          position: relative !important;
-          float: none !important;
-          clear: both !important;
         }
 
         .goog-te-menu2-item:hover {
@@ -284,7 +219,6 @@ export default function GoogleTranslateLoader({
           font-family: inherit !important;
         }
 
-        /* Add checkmark to selected language */
         .goog-te-menu2-item-selected::after {
           content: "✓";
           margin-left: 8px;
@@ -293,7 +227,6 @@ export default function GoogleTranslateLoader({
           font-size: 18px;
         }
 
-        /* Add hover indicator */
         .goog-te-menu2-item:hover::before {
           content: "▶";
           position: absolute;
@@ -303,84 +236,103 @@ export default function GoogleTranslateLoader({
           opacity: 0.7;
         }
 
-        /* Custom scrollbar with enhanced styling */
-        .goog-te-menu2::-webkit-scrollbar {
-          width: 10px;
+        /* MOBILE SPECIFIC - HORIZONTAL SCROLLING */
+        @media (max-width: 768px) {
+          /* Create a wrapper with scroll indicator */
+          .goog-te-menu-frame {
+            position: fixed !important;
+            left: 50% !important;
+            top: 100px !important;
+            transform: translateX(-50%) !important;
+            width: 90vw !important;
+            max-width: 90vw !important;
+            max-height: 65vh !important;
+            z-index: 999999 !important;
+            overflow: hidden !important;
+            border-radius: 12px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+          }
+
+          /* Add scroll instruction banner */
+          .goog-te-menu-frame::before {
+            content: "👆 SCROLL UP TO SEE ALL LANGUAGES 👆";
+            display: block;
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, #0000FF 0%, #5a8cff 100%);
+            color: white;
+            text-align: center;
+            padding: 12px 8px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            animation: pulse 2s ease-in-out infinite;
+          }
+
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+          }
+
+          /* Make menu2 scrollable horizontally */
+          .goog-te-menu2 {
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            max-height: calc(65vh - 48px) !important;
+            padding: 12px 8px 8px 8px !important;
+            -webkit-overflow-scrolling: touch;
+          }
+
+          /* Make table full width for vertical stacking */
+          .goog-te-menu2 table {
+            width: 100% !important;
+            min-width: unset !important;
+            border-collapse: separate !important;
+            border-spacing: 4px !important;
+          }
+
+          .goog-te-menu2-item {
+            white-space: normal !important;
+            min-width: unset !important;
+            padding: 14px 16px !important;
+            font-size: 15px !important;
+            touch-action: manipulation;
+            display: block !important;
+            width: 100% !important;
+          }
+
+          /* Prominent scrollbars for mobile */
+          .goog-te-menu2::-webkit-scrollbar {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          .goog-te-menu2::-webkit-scrollbar-track {
+            background: #f1f5f9 !important;
+            border-radius: 10px !important;
+            margin: 4px !important;
+          }
+
+          .goog-te-menu2::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #0000FF 0%, #5a8cff 100%) !important;
+            border-radius: 10px !important;
+            border: 3px solid #f1f5f9 !important;
+          }
+
+          .goog-te-menu2::-webkit-scrollbar-thumb:active {
+            background: #0000CC !important;
+          }
+
+          /* Corner scrollbar */
+          .goog-te-menu2::-webkit-scrollbar-corner {
+            background: #f1f5f9 !important;
+          }
         }
-
-        .goog-te-menu2::-webkit-scrollbar-track {
-          background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
-          border-radius: 10px;
-          margin: 8px 0;
-          border: 1px solid #e5e7eb;
-        }
-
-        .goog-te-menu2::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #0000FF 0%, #5a8cff 100%);
-          border-radius: 10px;
-          border: 2px solid #f9fafb;
-          transition: all 0.3s ease;
-        }
-
-        .goog-te-menu2::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #5a8cff 0%, #0000FF 100%);
-          border: 2px solid #e5e7eb;
-          box-shadow: 0 0 6px rgba(0, 0, 255, 0.4);
-        }
-
-         /* Mobile specific - force single column & fit viewport */
-         @media (max-width: 768px) {
-           .goog-te-menu-frame {
-             width: 100vw !important;
-             max-width: 100vw !important;
-             left: 0 !important;
-             right: 0 !important;
-             transform: none !important;
-             position: fixed !important;
-             z-index: 2147483647 !important;
-             top: 80px !important;
-             max-height: 70vh !important;
-             overflow-y: auto !important;
-             overflow-x: hidden !important;
-             margin: 0 !important;
-             border-radius: 12px !important;
-             padding: 0 !important;
-           }
-           
-           .goog-te-menu2 {
-             max-height: 70vh !important;
-             width: 100% !important;
-             padding: 8px !important;
-             overflow-x: hidden !important;
-           }
-
-           /* Force table to single column */
-           .goog-te-menu2 table,
-           .goog-te-menu2 tbody,
-           .goog-te-menu2 tr,
-           .goog-te-menu2 td {
-             display: block !important;
-             width: 100% !important;
-           }
-           
-           .goog-te-menu2-item {
-             width: 100% !important;
-             display: block !important;
-             padding: 12px 14px !important;
-             font-size: 16px !important;
-             min-height: 48px !important;
-             box-sizing: border-box !important;
-             white-space: normal !important;
-           }
-
-           .goog-te-menu2-item-selected::after {
-             font-size: 20px !important;
-           }
-
-           .goog-te-menu2::-webkit-scrollbar {
-             width: 10px !important;
-           }
-         }
 
         /* Animation for dropdown */
         @keyframes fadeInDown {
@@ -394,7 +346,6 @@ export default function GoogleTranslateLoader({
           }
         }
 
-        /* Hide the combo select if present */
         .goog-te-combo {
           display: none !important;
         }
@@ -402,71 +353,17 @@ export default function GoogleTranslateLoader({
       document.head.appendChild(style);
     }
 
-    // Dropdown fix with MutationObserver (runs AFTER widget loads) - Works for both desktop and mobile
+    // Minimal observer - just ensure mobile scrolling works
     let observer: MutationObserver | null = null;
     
-    // Function to force single-column layout
-    const forceSingleColumn = () => {
-      const menu2 = document.querySelector('.goog-te-menu2');
-      if (!menu2) return;
-      
-      // Force table structure to block layout
-      const tables = menu2.querySelectorAll('table');
-      tables.forEach((el) => {
-        const element = el as HTMLElement;
-        element.style.display = 'block';
-        element.style.width = '100%';
-        element.style.tableLayout = 'fixed';
-      });
-      
-      const tbodies = menu2.querySelectorAll('tbody');
-      tbodies.forEach((el) => {
-        const element = el as HTMLElement;
-        element.style.display = 'block';
-        element.style.width = '100%';
-      });
-      
-      const rows = menu2.querySelectorAll('tr');
-      rows.forEach((el) => {
-        const element = el as HTMLElement;
-        element.style.display = 'block';
-        element.style.width = '100%';
-        element.style.float = 'none';
-        element.style.clear = 'both';
-      });
-      
-      const cells = menu2.querySelectorAll('td');
-      cells.forEach((el) => {
-        const element = el as HTMLElement;
-        element.style.display = 'block';
-        element.style.width = '100%';
-        element.style.float = 'none';
-      });
-      
-      // Force items to be block-level
-      const items = menu2.querySelectorAll('.goog-te-menu2-item');
-      items.forEach((item) => {
-        const element = item as HTMLElement;
-        element.style.width = '100%';
-        element.style.display = 'block';
-        element.style.boxSizing = 'border-box';
-        element.style.whiteSpace = 'normal';
-        element.style.float = 'none';
-        element.style.clear = 'both';
-      });
-    };
-    
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
       observer = new MutationObserver(() => {
-        const menuFrame = document.querySelector('.goog-te-menu-frame');
         const menu2 = document.querySelector('.goog-te-menu2');
-        
-        if (menuFrame && menu2) {
-          // Apply fix immediately and with delays to catch all render cycles
-          forceSingleColumn();
-          setTimeout(forceSingleColumn, 50);
-          setTimeout(forceSingleColumn, 150);
-          setTimeout(forceSingleColumn, 300);
+        if (menu2) {
+          const element = menu2 as HTMLElement;
+          element.style.setProperty('overflow-x', 'auto', 'important');
+          element.style.setProperty('overflow-y', 'auto', 'important');
+          element.style.setProperty('-webkit-overflow-scrolling', 'touch', 'important');
         }
       });
       
@@ -474,17 +371,6 @@ export default function GoogleTranslateLoader({
         childList: true,
         subtree: true
       });
-      
-      // Also check periodically when dropdown might be opening
-      const checkInterval = setInterval(() => {
-        const menu2 = document.querySelector('.goog-te-menu2');
-        if (menu2 && menu2.children.length > 0) {
-          forceSingleColumn();
-        }
-      }, 200);
-      
-      // Store interval for cleanup
-      (window as any).__googleTranslateInterval = checkInterval;
     }
 
     // Separate initialization functions for desktop and mobile
@@ -494,7 +380,6 @@ export default function GoogleTranslateLoader({
     window[initFunctionName] = () => {
       const element = document.getElementById(targetId);
       if (element && window.google?.translate?.TranslateElement) {
-        // Clear existing content
         element.innerHTML = '';
         
         new window.google.translate.TranslateElement(
@@ -512,25 +397,18 @@ export default function GoogleTranslateLoader({
     // Check if script already loaded
     const scriptId = `google-translate-script-${isMobile ? 'mobile' : 'desktop'}`;
     if (!document.getElementById(scriptId)) {
-      // Load script
       const script = document.createElement("script");
       script.id = scriptId;
       script.src = `//translate.google.com/translate_a/element.js?cb=${initFunctionName}`;
       script.async = true;
       document.body.appendChild(script);
     } else if (window.google?.translate?.TranslateElement) {
-      // Script already loaded, just initialize
       window[initFunctionName]();
     }
 
     return () => {
-      // Cleanup
       if (observer) {
         observer.disconnect();
-      }
-      if ((window as any).__googleTranslateInterval) {
-        clearInterval((window as any).__googleTranslateInterval);
-        delete (window as any).__googleTranslateInterval;
       }
       const scriptElement = document.getElementById(scriptId);
       if (scriptElement) {

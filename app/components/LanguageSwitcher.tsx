@@ -137,7 +137,7 @@ export default function LanguageSwitcher() {
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white border border-gray-300 z-50 max-h-96 overflow-hidden flex flex-col">
+          <div className="absolute right-0 sm:right-0 left-0 sm:left-auto mt-2 w-full sm:w-64 rounded-md shadow-lg bg-white border border-gray-300 z-50 max-h-96 overflow-hidden flex flex-col">
             <div className="sticky top-0 bg-white border-b border-gray-300 p-3">
               <input
                 type="text"
