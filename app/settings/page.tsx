@@ -98,7 +98,7 @@ export default function Settings() {
             <div className="flex flex-col md:flex-row gap-6 items-center">
               <div className="flex-shrink-0">
                 <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-blue-600 bg-blue-50">
-                  <img src={profilePic ?? '/mission.jpg'} alt="Profile" className="w-full h-full object-cover" />
+                  <img src={profilePic ?? '/cruz.png'} alt="Profile" className="w-full h-full object-cover" />
                 </div>
                 <label className="mt-3 flex items-center gap-3 text-sm">
                   <input
