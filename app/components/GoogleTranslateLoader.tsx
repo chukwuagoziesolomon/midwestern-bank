@@ -164,13 +164,15 @@ export default function GoogleTranslateLoader({
           display: none !important;
         }
 
-        /* Dropdown menu styling - DESKTOP */
+        /* Dropdown menu styling - UNIVERSAL */
         .goog-te-menu-frame {
           border: 2px solid #e5e7eb !important;
           border-radius: 16px !important;
           box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
           background: white !important;
           animation: fadeInDown 0.3s ease-out !important;
+          max-height: 400px !important;
+          overflow: hidden !important;
         }
 
         .goog-te-menu-frame.box {
@@ -181,6 +183,57 @@ export default function GoogleTranslateLoader({
           border: none !important;
           background: white !important;
           padding: 8px !important;
+          max-height: 350px !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+        
+        /* NUCLEAR OPTION - FORCE SINGLE COLUMN */
+        .goog-te-menu-frame {
+          width: 280px !important;
+          min-width: 280px !important;
+          max-width: 280px !important;
+        }
+        
+        .goog-te-menu2 {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          width: 100% !important;
+        }
+        
+        .goog-te-menu2 * {
+          max-width: 100% !important;
+        }
+        
+        .goog-te-menu2 table {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          width: 100% !important;
+          table-layout: auto !important;
+        }
+        
+        .goog-te-menu2 tbody {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          width: 100% !important;
+        }
+        
+        .goog-te-menu2 tr {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          width: 100% !important;
+        }
+        
+        .goog-te-menu2 td {
+          display: block !important;
+          width: 100% !important;
+          float: none !important;
+          grid-column: 1 !important;
+        }
+        
+        .goog-te-menu2-colpad {
+          display: none !important;
         }
 
         /* Language items with enhanced styling */
@@ -195,6 +248,10 @@ export default function GoogleTranslateLoader({
           cursor: pointer !important;
           font-family: inherit !important;
           border: none !important;
+          display: block !important;
+          width: 100% !important;
+          white-space: normal !important;
+          text-align: left !important;
         }
 
         .goog-te-menu2-item:hover {
@@ -235,102 +292,62 @@ export default function GoogleTranslateLoader({
           font-size: 12px;
           opacity: 0.7;
         }
+        
+        /* Scrollbar styling - Desktop and Mobile */
+        .goog-te-menu2::-webkit-scrollbar {
+          width: 12px !important;
+        }
 
-        /* MOBILE SPECIFIC - HORIZONTAL SCROLLING */
+        .goog-te-menu2::-webkit-scrollbar-track {
+          background: #f1f5f9 !important;
+          border-radius: 10px !important;
+          margin: 8px 0 !important;
+        }
+
+        .goog-te-menu2::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #0000FF 0%, #5a8cff 100%) !important;
+          border-radius: 10px !important;
+          border: 3px solid #f1f5f9 !important;
+        }
+
+        .goog-te-menu2::-webkit-scrollbar-thumb:hover {
+          background: #0000CC !important;
+        }
+
+        /* MOBILE SPECIFIC ADJUSTMENTS */
         @media (max-width: 768px) {
-          /* Create a wrapper with scroll indicator */
           .goog-te-menu-frame {
             position: fixed !important;
             left: 50% !important;
-            top: 100px !important;
-            transform: translateX(-50%) !important;
-            width: 90vw !important;
-            max-width: 90vw !important;
-            max-height: 65vh !important;
+            top: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 85vw !important;
+            max-width: 400px !important;
+            max-height: 70vh !important;
             z-index: 999999 !important;
-            overflow: hidden !important;
-            border-radius: 12px !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
           }
 
-          /* Add scroll instruction banner */
-          .goog-te-menu-frame::before {
-            content: "👆 SCROLL UP TO SEE ALL LANGUAGES 👆";
-            display: block;
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(135deg, #0000FF 0%, #5a8cff 100%);
-            color: white;
-            text-align: center;
-            padding: 12px 8px;
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            border-radius: 8px 8px 0 0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            animation: pulse 2s ease-in-out infinite;
-          }
-
-          @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-          }
-
-          /* Make menu2 scrollable horizontally */
           .goog-te-menu2 {
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-            max-height: calc(65vh - 48px) !important;
-            padding: 12px 8px 8px 8px !important;
-            -webkit-overflow-scrolling: touch;
-          }
-
-          /* Make table full width for vertical stacking */
-          .goog-te-menu2 table {
-            width: 100% !important;
-            min-width: unset !important;
-            border-collapse: separate !important;
-            border-spacing: 4px !important;
+            max-height: calc(70vh - 20px) !important;
+            padding: 10px !important;
           }
 
           .goog-te-menu2-item {
-            white-space: normal !important;
-            min-width: unset !important;
-            padding: 14px 16px !important;
-            font-size: 15px !important;
-            touch-action: manipulation;
-            display: block !important;
-            width: 100% !important;
+            padding: 16px 18px !important;
+            font-size: 16px !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
           }
-
-          /* Prominent scrollbars for mobile */
+          
+          /* Larger scrollbar for mobile touch */
           .goog-te-menu2::-webkit-scrollbar {
             width: 14px !important;
-            height: 14px !important;
           }
-
-          .goog-te-menu2::-webkit-scrollbar-track {
-            background: #f1f5f9 !important;
-            border-radius: 10px !important;
-            margin: 4px !important;
-          }
-
+          
           .goog-te-menu2::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #0000FF 0%, #5a8cff 100%) !important;
-            border-radius: 10px !important;
-            border: 3px solid #f1f5f9 !important;
-          }
-
-          .goog-te-menu2::-webkit-scrollbar-thumb:active {
-            background: #0000CC !important;
-          }
-
-          /* Corner scrollbar */
-          .goog-te-menu2::-webkit-scrollbar-corner {
-            background: #f1f5f9 !important;
+            border: 2px solid #f1f5f9 !important;
           }
         }
 
@@ -353,25 +370,105 @@ export default function GoogleTranslateLoader({
       document.head.appendChild(style);
     }
 
-    // Minimal observer - just ensure mobile scrolling works
+    // Nuclear option - restructure the entire table on every mutation
     let observer: MutationObserver | null = null;
     
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      observer = new MutationObserver(() => {
-        const menu2 = document.querySelector('.goog-te-menu2');
-        if (menu2) {
-          const element = menu2 as HTMLElement;
-          element.style.setProperty('overflow-x', 'auto', 'important');
-          element.style.setProperty('overflow-y', 'auto', 'important');
-          element.style.setProperty('-webkit-overflow-scrolling', 'touch', 'important');
-        }
-      });
+    const forceSingleColumn = () => {
+      const menuFrame = document.querySelector('.goog-te-menu-frame');
+      const menu2 = document.querySelector('.goog-te-menu2');
       
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    }
+      if (menuFrame) {
+        const frame = menuFrame as HTMLElement;
+        frame.style.cssText = `
+          width: 280px !important;
+          min-width: 280px !important;
+          max-width: 280px !important;
+          max-height: 400px !important;
+          overflow: hidden !important;
+        `;
+      }
+      
+      if (menu2) {
+        const element = menu2 as HTMLElement;
+        element.style.cssText = `
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          overflow-y: auto !important;
+          overflow-x: hidden !important;
+          max-height: 350px !important;
+          width: 100% !important;
+          -webkit-overflow-scrolling: touch !important;
+        `;
+        
+        const table = menu2.querySelector('table');
+        if (table) {
+          (table as HTMLElement).style.cssText = `
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            width: 100% !important;
+          `;
+          
+          const tbody = table.querySelector('tbody');
+          if (tbody) {
+            (tbody as HTMLElement).style.cssText = `
+              display: grid !important;
+              grid-template-columns: 1fr !important;
+              width: 100% !important;
+            `;
+            
+            // Restructure: Get all language items and force them into a single column
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+              (row as HTMLElement).style.cssText = `
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                width: 100% !important;
+              `;
+              
+              // Get all cells in this row and stack them
+              const cells = row.querySelectorAll('td');
+              cells.forEach(cell => {
+                (cell as HTMLElement).style.cssText = `
+                  display: block !important;
+                  width: 100% !important;
+                  float: none !important;
+                  grid-column: 1 !important;
+                `;
+              });
+            });
+          }
+          
+          // Hide column padding elements
+          const colpads = table.querySelectorAll('.goog-te-menu2-colpad');
+          colpads.forEach(pad => {
+            (pad as HTMLElement).style.display = 'none';
+          });
+        }
+      }
+    };
+    
+    observer = new MutationObserver((mutations) => {
+      forceSingleColumn();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+    
+    // Force multiple times on any interaction
+    const forceMultipleTimes = () => {
+      forceSingleColumn();
+      setTimeout(forceSingleColumn, 50);
+      setTimeout(forceSingleColumn, 100);
+      setTimeout(forceSingleColumn, 200);
+      setTimeout(forceSingleColumn, 500);
+    };
+    
+    document.addEventListener('click', forceMultipleTimes);
+    document.addEventListener('touchstart', forceMultipleTimes);
 
     // Separate initialization functions for desktop and mobile
     const initFunctionName = isMobile ? 'googleTranslateElementInitMobile' : 'googleTranslateElementInit';

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslation } from "@/lib/TranslationContext";
-import GoogleTranslateLoader from "./GoogleTranslateLoader";
+import CustomLanguageSelector from "./CustomLanguageSelector";
 
 export default function Navbar({ active }: { active?: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -19,9 +19,6 @@ export default function Navbar({ active }: { active?: string }) {
 
   return (
     <>
-      {/* Load Google Translate for desktop */}
-      <GoogleTranslateLoader targetId="google_translate_element" isMobile={false} />
-      
       <header className="w-full flex justify-center pt-8 pb-2">
         <div className="flex items-center justify-between w-full max-w-6xl px-8 py-5 rounded-3xl bg-gradient-to-r from-white via-white to-gray-50 border border-gray-200 shadow-xl backdrop-blur-sm">
           <div className="flex items-center gap-3">
@@ -46,8 +43,7 @@ export default function Navbar({ active }: { active?: string }) {
 
           {/* Desktop Buttons + Language */}
           <div className="hidden md:flex gap-3 items-center">
-            <span className="text-xs font-semibold text-black mr-2">Select Language:</span>
-              <div id="google_translate_element" className="google-translate-desktop" />
+            <CustomLanguageSelector isMobile={false} />
             <Link 
               href="/signup" 
               className="px-6 py-2 rounded-full bg-white text-[#0000FF] border border-[#0000FF] font-semibold hover:bg-[#0000FF] hover:text-white transition-all duration-200"
@@ -64,12 +60,7 @@ export default function Navbar({ active }: { active?: string }) {
 
           {/* Mobile: Translate + Hamburger */}
           <div className="md:hidden flex items-center gap-2">
-            {/* Mobile Google Translate - Outside menu */}
-            <div className="notranslate google-translate-mobile-compact" style={{ isolation: 'isolate' }}>
-  <span className="text-xs font-semibold text-black mr-1">Select Language:</span>
-  <GoogleTranslateLoader targetId="google_translate_element_mobile" isMobile={true} />
-  <div id="google_translate_element_mobile" />
-</div>
+            <CustomLanguageSelector isMobile={true} />
             
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
