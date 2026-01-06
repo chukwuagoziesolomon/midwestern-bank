@@ -285,8 +285,8 @@ export default function CustomLanguageSelector({ isMobile = false }: CustomLangu
             <div
               className={`${
                 isMobile
-                  ? "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[85vw] max-w-[400px] z-50"
-                  : "absolute right-0 mt-2 w-72 z-50"
+                  ? "fixed top-[120px] left-1/2 transform -translate-x-1/2 w-[90vw] max-w-[400px] z-50"
+                  : "absolute right-0 mt-2 w-80 z-50"
               } bg-white border-2 border-gray-200 rounded-2xl shadow-2xl overflow-hidden`}
             >
               {/* Search box */}
