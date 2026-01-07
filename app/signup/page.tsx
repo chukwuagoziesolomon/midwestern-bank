@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import SignupSuccessModal from "../components/SignupSuccessModal";
 
 export default function SignUp() {
     const router = useRouter();
@@ -19,6 +20,8 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [signupEmail, setSignupEmail] = useState("");
   const testimonials = {
     individual: [
       {
@@ -54,14 +57,14 @@ export default function SignUp() {
       if (response.error) {
         setError(response.error);
       } else if (response.data) {
-        // After signup, automatically log in
-        const loginResponse = await apiClient.login({ email, password });
-        if (loginResponse.error) {
-          setError("Account created but login failed. Please try logging in manually.");
-        } else if (loginResponse.data) {
-          login(loginResponse.data.user);
-          router.push('/dashboard');
-        }
+        // Show success modal instead of auto-login
+        setSignupEmail(email);
+        setShowSuccessModal(true);
+        // Reset form
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -70,8 +73,20 @@ export default function SignUp() {
     }
   };
 
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    router.push('/login');
+  };
+
   return (
     <div className="min-h-screen bg-white font-sans text-black">
+      {/* Success Modal */}
+      <SignupSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleModalClose}
+        email={signupEmail}
+      />
+      
       {/* Header/Navbar */}
       <Navbar active="signup" />
       {/* Sign Up Form Section */}
