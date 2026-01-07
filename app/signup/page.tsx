@@ -146,14 +146,7 @@ export default function SignUp() {
             </button>
             <Link href="/login" className="w-full px-6 py-3 rounded-full bg-white text-[#0000FF] font-bold text-lg shadow-lg hover:bg-[#5a8cff] hover:text-white transition flex items-center justify-center">Login</Link>
           </form>
-          <div className="w-full flex flex-col items-center gap-2 mt-4">
-            <span className="text-black text-sm">Or Continue with</span>
-            <div className="flex gap-6 mt-2">
-              <button className="w-10 h-10 rounded-full bg-[#0000FF] flex items-center justify-center"><span className="text-white font-bold text-lg">G</span></button>
-              <button className="w-10 h-10 rounded-full bg-[#0000FF] flex items-center justify-center"><span className="text-white font-bold text-lg">f</span></button>
-              <button className="w-10 h-10 rounded-full bg-[#0000FF] flex items-center justify-center"><span className="text-white font-bold text-lg"></span></button>
-            </div>
-          </div>
+
         </div>
       </section>
       {/* Testimonials Section */}
