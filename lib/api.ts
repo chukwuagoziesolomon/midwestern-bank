@@ -85,8 +85,8 @@ class ApiClient {
     last_name: string;
     email: string;
     password: string;
-  }) {
-    return this.request('/signup/', {
+  }): Promise<ApiResponse<SignupResponse>> {
+    return this.request<SignupResponse>('/signup/', {
       method: 'POST',
       body: JSON.stringify(userData),
     });

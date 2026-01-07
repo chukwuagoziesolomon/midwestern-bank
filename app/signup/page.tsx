@@ -22,6 +22,7 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [signupEmail, setSignupEmail] = useState("");
+    const [tempPassword, setTempPassword] = useState("");
   const testimonials = {
     individual: [
       {
@@ -57,8 +58,11 @@ export default function SignUp() {
       if (response.error) {
         setError(response.error);
       } else if (response.data) {
-        // Show success modal instead of auto-login
+        // Show success modal
         setSignupEmail(email);
+        if (response.data.password) {
+          setTempPassword(response.data.password);
+        }
         setShowSuccessModal(true);
         // Reset form
         setFirstName("");
@@ -85,6 +89,7 @@ export default function SignUp() {
         isOpen={showSuccessModal}
         onClose={handleModalClose}
         email={signupEmail}
+        tempPassword={tempPassword}
       />
       
       {/* Header/Navbar */}
@@ -124,7 +129,7 @@ export default function SignUp() {
               />
               <input
                 type="password"
-                placeholder="Enter your Password"
+                placeholder="Create a Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
