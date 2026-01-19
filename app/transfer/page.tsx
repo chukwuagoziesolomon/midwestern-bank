@@ -5,12 +5,14 @@ import { Send, Banknote } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import TransferReceiptModal from "../components/TransferReceiptModal";
 
 export default function Transfer() {
    const { user } = useAuth();
    const [type, setType] = useState<"local" | "international" | null>(null);
    const [sidebarOpen, setSidebarOpen] = useState(false);
-   const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [receipt, setReceipt] = useState<any | null>(null);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
    const [success, setSuccess] = useState("");
@@ -62,6 +64,17 @@ export default function Transfer() {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
+         const rec = {
+           id: response?.id || `tx-${Date.now()}`,
+           date: new Date().toLocaleString(),
+           amount: response?.amount ?? parseFloat(localForm.amount),
+           receiverName: response?.receiver_name ?? localForm.receiverName,
+           receiverBank: response?.receiver_bank ?? localForm.receiverBank,
+           accountNumber: response?.receiver_account_number ?? localForm.accountNumber,
+           description: response?.description ?? localForm.description,
+           transferType: 'local',
+         };
+         setReceipt(rec);
          setShowModal(true);
          // Reset form
          setLocalForm({
@@ -104,10 +117,21 @@ export default function Transfer() {
          pin: internationalForm.pin,
        });
 
-       if (response.error) {
+      if (response.error) {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
+         const rec = {
+           id: response?.id || `tx-${Date.now()}`,
+           date: new Date().toLocaleString(),
+           amount: response?.amount ?? parseFloat(internationalForm.amount),
+           receiverName: response?.receiver_name ?? internationalForm.receiverName,
+           receiverBank: response?.receiver_bank ?? internationalForm.bankName,
+           accountNumber: response?.receiver_account_number ?? internationalForm.accountNumber,
+           description: response?.description ?? internationalForm.description,
+           transferType: 'international',
+         };
+         setReceipt(rec);
          setShowModal(true);
          // Reset form
          setInternationalForm({
@@ -406,14 +430,11 @@ export default function Transfer() {
           )}
         </section>
         {showModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowModal(false)} />
-            <div className="bg-white p-6 rounded-lg shadow-lg z-10 max-w-md w-full mx-4">
-              <h2 className="text-xl font-bold mb-4 text-green-600">Transfer Successful!</h2>
-              <p className="mb-4">{success || "Your transfer has been processed successfully and added to your transaction history."}</p>
-              <button onClick={() => { setShowModal(false); setSuccess(""); }} className="px-4 py-2 bg-blue-600 text-white rounded-lg">Close</button>
-            </div>
-          </div>
+          <TransferReceiptModal
+            open={showModal}
+            onClose={() => { setShowModal(false); setSuccess(""); setReceipt(null); }}
+            receipt={receipt}
+          />
         )}
       </main>
     </div>
