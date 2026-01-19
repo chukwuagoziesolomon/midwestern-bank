@@ -5,14 +5,15 @@ import { Send, Banknote } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
-import TransferReceiptModal from "../components/TransferReceiptModal";
+import ReceiptModal from "../components/ReceiptModal";
 
 export default function Transfer() {
    const { user } = useAuth();
    const [type, setType] = useState<"local" | "international" | null>(null);
    const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [receipt, setReceipt] = useState<any | null>(null);
+  const [receiptUrls, setReceiptUrls] = useState<any | null>(null);
+  const [receiptMeta, setReceiptMeta] = useState<any | null>(null);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState("");
    const [success, setSuccess] = useState("");
@@ -64,17 +65,20 @@ export default function Transfer() {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
-         const rec = {
-           id: response?.id || `tx-${Date.now()}`,
+         const data = response.data;
+         setReceiptUrls(data?.receipt_urls ?? null);
+         const transfer = data?.transfer ?? null;
+         const meta = {
+           id: transfer?.id ?? `tx-${Date.now()}`,
            date: new Date().toLocaleString(),
-           amount: response?.amount ?? parseFloat(localForm.amount),
-           receiverName: response?.receiver_name ?? localForm.receiverName,
-           receiverBank: response?.receiver_bank ?? localForm.receiverBank,
-           accountNumber: response?.receiver_account_number ?? localForm.accountNumber,
-           description: response?.description ?? localForm.description,
+           amount: transfer?.amount ?? parseFloat(localForm.amount),
+           receiverName: transfer?.receiver_name ?? localForm.receiverName,
+           receiverBank: transfer?.receiver_bank ?? localForm.receiverBank,
+           accountNumber: transfer?.receiver_account_number ?? localForm.accountNumber,
+           description: transfer?.description ?? localForm.description,
            transferType: 'local',
          };
-         setReceipt(rec);
+         setReceiptMeta(meta);
          setShowModal(true);
          // Reset form
          setLocalForm({
@@ -117,21 +121,24 @@ export default function Transfer() {
          pin: internationalForm.pin,
        });
 
-      if (response.error) {
+       if (response.error) {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
-         const rec = {
-           id: response?.id || `tx-${Date.now()}`,
+         const data = response.data;
+         setReceiptUrls(data?.receipt_urls ?? null);
+         const transfer = data?.transfer ?? null;
+         const meta = {
+           id: transfer?.id ?? `tx-${Date.now()}`,
            date: new Date().toLocaleString(),
-           amount: response?.amount ?? parseFloat(internationalForm.amount),
-           receiverName: response?.receiver_name ?? internationalForm.receiverName,
-           receiverBank: response?.receiver_bank ?? internationalForm.bankName,
-           accountNumber: response?.receiver_account_number ?? internationalForm.accountNumber,
-           description: response?.description ?? internationalForm.description,
+           amount: transfer?.amount ?? parseFloat(internationalForm.amount),
+           receiverName: transfer?.receiver_name ?? internationalForm.receiverName,
+           receiverBank: transfer?.receiver_bank ?? internationalForm.bankName,
+           accountNumber: transfer?.receiver_account_number ?? internationalForm.accountNumber,
+           description: transfer?.description ?? internationalForm.description,
            transferType: 'international',
          };
-         setReceipt(rec);
+         setReceiptMeta(meta);
          setShowModal(true);
          // Reset form
          setInternationalForm({
@@ -430,10 +437,11 @@ export default function Transfer() {
           )}
         </section>
         {showModal && (
-          <TransferReceiptModal
+          <ReceiptModal
             open={showModal}
-            onClose={() => { setShowModal(false); setSuccess(""); setReceipt(null); }}
-            receipt={receipt}
+            onClose={() => { setShowModal(false); setSuccess(""); setReceiptUrls(null); setReceiptMeta(null); }}
+            receiptUrls={receiptUrls}
+            receiptMeta={receiptMeta}
           />
         )}
       </main>
