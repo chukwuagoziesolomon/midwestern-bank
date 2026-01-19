@@ -65,7 +65,7 @@ export default function Transfer() {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
-         const data = response.data;
+        const data = (response.data ?? {}) as any;
          setReceiptUrls(data?.receipt_urls ?? null);
          const transfer = data?.transfer ?? null;
          const meta = {
@@ -125,7 +125,7 @@ export default function Transfer() {
          setError(response.error);
        } else {
          setSuccess("Transfer completed successfully!");
-         const data = response.data;
+         const data = (response.data ?? {}) as any;
          setReceiptUrls(data?.receipt_urls ?? null);
          const transfer = data?.transfer ?? null;
          const meta = {
