@@ -7,10 +7,37 @@ import { useAuth } from "@/lib/AuthContext";
 
 export default function Settings() {
    const { user } = useAuth();
-   const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<{ id?: number; first_name?: string; last_name?: string; email?: string; profile_picture?: string } | null>(null);
    const [error, setError] = useState("");
    const [success, setSuccess] = useState("");
-   const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [profilePic, setProfilePic] = useState<string | null>(null);
+  const [uploadingPic, setUploadingPic] = useState(false);
+  const handleProfilePicUpload = async (file: File) => {
+    if (!user) return;
+    setUploadingPic(true);
+    setError("");
+    setSuccess("");
+    try {
+      const formData = new FormData();
+      formData.append('user_id', String(user.id));
+      formData.append('profile_picture', file);
+      const response = await fetch('/api/settings/', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok || data.error) {
+        setError(data.error || 'An error occurred');
+      } else {
+        setSuccess('Profile picture updated!');
+        await fetchUserData(); // Refresh user data to get new profile picture
+      }
+    } catch (err) {
+      setError('Failed to upload profile picture');
+    } finally {
+      setUploadingPic(false);
+    }
+  };
    const [currentPassword, setCurrentPassword] = useState("");
    const [newPassword, setNewPassword] = useState("");
    const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,10 +53,13 @@ export default function Settings() {
      if (!user) return;
  
      try {
-       const response = await apiClient.getSettings(user.id);
-       if (response.data) {
-         setUserData(response.data);
-       }
+      const response = await apiClient.getSettings(user.id);
+      if (response.data) {
+        // Ensure response.data is typed correctly
+        const typedData: { id?: number; first_name?: string; last_name?: string; email?: string; profile_picture?: string } = response.data;
+        setUserData(typedData);
+        setProfilePic(typedData.profile_picture ?? null);
+      }
      } catch (error) {
        console.error('Error fetching user data:', error);
      }
@@ -104,15 +134,18 @@ export default function Settings() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const file = e.target.files?.[0];
-                      if (file) setProfilePic(URL.createObjectURL(file));
+                      if (file) {
+                        await handleProfilePicUpload(file);
+                      }
                     }}
                     className="hidden"
                     id="profile-upload"
                   />
                   <button className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm" onClick={() => document.getElementById('profile-upload')?.click()}>Upload</button>
                   <button className="px-3 py-2 rounded-lg bg-white border border-blue-600 text-sm text-blue-600" onClick={() => setProfilePic(null)}>Reset</button>
+                  {uploadingPic && <span className="ml-2 text-blue-600">Uploading...</span>}
                 </label>
               </div>
               <div className="flex-1 w-full">
