@@ -14,6 +14,15 @@ type ReceiptData = {
   transferType?: string;
 };
 
+export default function TransferReceiptModal({
+  open,
+  onClose,
+  receipt,
+}: {
+  open: boolean;
+  onClose: () => void;
+  receipt: ReceiptData | null;
+}) {
   const [issue, setIssue] = useState<string | null>(null);
   const receiptRef = useRef<HTMLDivElement | null>(null);
 
