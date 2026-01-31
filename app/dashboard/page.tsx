@@ -141,7 +141,7 @@ export default function Dashboard() {
         {/* Profile avatar (top-right) */}
         <div className="absolute top-4 right-4 z-50 flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-lg border border-blue-100">
           <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#0000FF] bg-white">
-            <Image src="/cruz.png" alt="Profile" width={48} height={48} />
+            <Image src={userData?.profile_picture || "/cruz.png"} alt="Profile" width={48} height={48} />
           </div>
           <div className="hidden sm:block text-right">
             <div className="text-sm font-bold text-black">
