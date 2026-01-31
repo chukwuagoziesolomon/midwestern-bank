@@ -21,7 +21,8 @@ export default function Settings() {
       const formData = new FormData();
       formData.append('user_id', String(user.id));
       formData.append('profile_picture', file);
-      const response = await fetch('/api/settings/', {
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/settings/`;
+      const response = await fetch(apiUrl, {
         method: 'POST',
         body: formData,
       });
