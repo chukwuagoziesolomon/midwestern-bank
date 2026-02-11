@@ -31,7 +31,9 @@ interface LoginResponse {
 
 interface SignupResponse {
   message: string;
-  password: string;
+  email: string;
+  status: string;
+  note: string;
 }
 
 class ApiClient {
@@ -85,6 +87,7 @@ class ApiClient {
     last_name: string;
     email: string;
     password: string;
+    pin: string;
   }): Promise<ApiResponse<SignupResponse>> {
     return this.request<SignupResponse>('/signup/', {
       method: 'POST',

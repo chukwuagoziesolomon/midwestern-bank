@@ -18,11 +18,13 @@ export default function SignUp() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [pin, setPin] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [signupEmail, setSignupEmail] = useState("");
-    const [tempPassword, setTempPassword] = useState("");
+    const [signupStatus, setSignupStatus] = useState("");
+    const [signupNote, setSignupNote] = useState("");
   const testimonials = {
     individual: [
       {
@@ -48,27 +50,35 @@ export default function SignUp() {
     setError("");
     setLoading(true);
 
+    // Validate PIN
+    if (!/^\d{4}$/.test(pin)) {
+      setError("PIN must be exactly 4 digits");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await apiClient.signup({
         first_name: firstName,
         last_name: lastName,
         email,
         password,
+        pin,
       });
       if (response.error) {
         setError(response.error);
       } else if (response.data) {
         // Show success modal
         setSignupEmail(email);
-        if (response.data.password) {
-          setTempPassword(response.data.password);
-        }
+        setSignupStatus(response.data.status);
+        setSignupNote(response.data.note);
         setShowSuccessModal(true);
         // Reset form
         setFirstName("");
         setLastName("");
         setEmail("");
         setPassword("");
+        setPin("");
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -89,7 +99,8 @@ export default function SignUp() {
         isOpen={showSuccessModal}
         onClose={handleModalClose}
         email={signupEmail}
-        tempPassword={tempPassword}
+        status={signupStatus}
+        note={signupNote}
       />
       
       {/* Header/Navbar */}
@@ -136,6 +147,15 @@ export default function SignUp() {
                 required
               />
             </div>
+            <input
+              type="text"
+              placeholder="Enter 4-digit PIN"
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="px-4 py-3 rounded-full bg-[#f5f5f5] border border-[#0000FF] text-black placeholder-[#888] focus:outline-none"
+              required
+              maxLength={4}
+            />
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <button
               type="submit"

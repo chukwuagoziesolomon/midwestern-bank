@@ -6,12 +6,12 @@ interface SignupSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
   email: string;
-  tempPassword?: string;
+  status?: string;
+  note?: string;
 }
 
-export default function SignupSuccessModal({ isOpen, onClose, email, tempPassword }: SignupSuccessModalProps) {
+export default function SignupSuccessModal({ isOpen, onClose, email, status, note }: SignupSuccessModalProps) {
   const [animateIn, setAnimateIn] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -20,14 +20,6 @@ export default function SignupSuccessModal({ isOpen, onClose, email, tempPasswor
       setAnimateIn(false);
     }
   }, [isOpen]);
-
-  const handleCopyPassword = () => {
-    if (tempPassword) {
-      navigator.clipboard.writeText(tempPassword);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   if (!isOpen) return null;
 
@@ -63,28 +55,19 @@ export default function SignupSuccessModal({ isOpen, onClose, email, tempPasswor
             <p className="text-gray-800 font-semibold text-sm">{email}</p>
           </div>
 
-          {/* Temporary Password */}
-          {tempPassword && (
+          {/* Account Status */}
+          {status && (
             <div className="p-3 bg-blue-50 rounded-xl border-2 border-[#0000FF]">
-              <p className="text-xs text-[#0000FF] font-semibold mb-2">Password</p>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={tempPassword}
-                  readOnly
-                  className="flex-1 px-2 py-1.5 bg-white border border-[#0000FF] rounded-lg text-gray-800 font-mono font-bold text-xs"
-                />
-                <button
-                  onClick={handleCopyPassword}
-                  className={`px-2 py-1.5 rounded-lg transition text-xs font-bold ${
-                    copied
-                      ? "bg-green-500 text-white"
-                      : "bg-[#0000FF] text-white hover:bg-[#5a8cff]"
-                  }`}
-                >
-                  {copied ? "✓" : <Copy size={14} />}
-                </button>
-              </div>
+              <p className="text-xs text-[#0000FF] font-semibold mb-2">Account Status</p>
+              <p className="text-gray-800 font-semibold text-sm">{status}</p>
+            </div>
+          )}
+
+          {/* Note */}
+          {note && (
+            <div className="p-3 bg-yellow-50 rounded-xl border-2 border-yellow-400">
+              <p className="text-xs text-yellow-700 font-semibold mb-2">Note</p>
+              <p className="text-gray-800 text-sm">{note}</p>
             </div>
           )}
 
