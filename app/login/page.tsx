@@ -46,8 +46,12 @@ const Login = () => {
       if (response.error) {
         setError(response.error);
       } else if (response.data) {
-        login(response.data.user);
-        router.push('/dashboard');
+        login(response.data.user, response.data.token);
+        if (response.data.user.role === "admin") {
+          router.push('/admin');
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (err) {
       setError("An unexpected error occurred");

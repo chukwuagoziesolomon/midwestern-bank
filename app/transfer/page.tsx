@@ -5,7 +5,7 @@ import { Send, Banknote } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
-import ReceiptModal from "../components/ReceiptModal";
+import BeautifulReceiptModal from "../components/BeautifulReceiptModal";
 
 export default function Transfer() {
    const { user } = useAuth();
@@ -73,8 +73,8 @@ export default function Transfer() {
            date: new Date().toLocaleString(),
            amount: transfer?.amount ?? parseFloat(localForm.amount),
            receiverName: transfer?.receiver_name ?? localForm.receiverName,
-           receiverBank: transfer?.receiver_bank ?? localForm.receiverBank,
            accountNumber: transfer?.receiver_account_number ?? localForm.accountNumber,
+           bankName: transfer?.receiver_bank ?? localForm.receiverBank,
            description: transfer?.description ?? localForm.description,
            transferType: 'local',
          };
@@ -133,8 +133,8 @@ export default function Transfer() {
            date: new Date().toLocaleString(),
            amount: transfer?.amount ?? parseFloat(internationalForm.amount),
            receiverName: transfer?.receiver_name ?? internationalForm.receiverName,
-           receiverBank: transfer?.receiver_bank ?? internationalForm.bankName,
            accountNumber: transfer?.receiver_account_number ?? internationalForm.accountNumber,
+           bankName: transfer?.receiver_bank ?? internationalForm.bankName,
            description: transfer?.description ?? internationalForm.description,
            transferType: 'international',
          };
@@ -437,10 +437,9 @@ export default function Transfer() {
           )}
         </section>
         {showModal && (
-          <ReceiptModal
+          <BeautifulReceiptModal
             open={showModal}
             onClose={() => { setShowModal(false); setSuccess(""); setReceiptUrls(null); setReceiptMeta(null); }}
-            receiptUrls={receiptUrls}
             receiptMeta={receiptMeta}
           />
         )}

@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  firstName       String    @map("first_name")
+  lastName        String    @map("last_name")
+  passwordHash    String    @map("password_hash")
+  pin             String    // hashed 4-digit pin
+  profilePicture  String?   @map("profile_picture")
+  role            String    @default("user") // 'user' | 'admin'
+  status          String    @default("pending") // 'pending' | 'approved' | 'rejected'
+  banned          Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  account    Account?
+  card       Card?
+  transfers  Transfer[]
+
+  @@map("users")
+}
+
+model Account {
+  id               Int      @id @default(autoincrement())
+  userId           Int      @unique @map("user_id")
+  totalBalance     Decimal  @default(0) @map("total_balance") @db.Decimal(14, 2)
+  availableBalance Decimal  @default(0) @map("available_balance") @db.Decimal(14, 2)
+  loansDue         Decimal  @default(0) @map("loans_due") @db.Decimal(14, 2)
+  mortgageDue      Decimal  @default(0) @map("mortgage_due") @db.Decimal(14, 2)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Card {
+  id             Int     @id @default(autoincrement())
+  userId         Int     @unique @map("user_id")
+  cardNumber     String  @map("card_number")
+  cardExpiry     String  @map("card_expiry") // MM/YY
+  cardHolderName String  @map("card_holder_name")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("cards")
+}
+
+model Transfer {
+  id                   Int      @id @default(autoincrement())
+  userId               Int      @map("user_id")
+  transferType         String   @map("transfer_type") // 'local' | 'international'
+  receiverName         String   @map("receiver_name")
+  receiverBank         String   @map("receiver_bank")
+  receiverAccountNumber String  @map("receiver_account_number")
+  routingNumber        String?  @map("routing_number")
+  receiverBankAddress  String?  @map("receiver_bank_address")
+  iban                 String?
+  swiftCode            String?  @map("swift_code")
+  amount               Decimal  @db.Decimal(14, 2)
+  description          String
+  status               String   @default("completed") // 'completed' | 'pending' | 'failed'
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transfers")
+}

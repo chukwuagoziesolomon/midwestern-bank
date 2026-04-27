@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://midwestern-bank-backend.onrender.com/api';
+const API_BASE_URL = '/api';
 
 // Import the loading context (we'll handle this carefully to avoid circular imports)
 let loadingSetter: ((loading: boolean) => void) | null = null;
@@ -12,6 +12,11 @@ export const setLoadingCallbacks = (
   messageSetter = setMessage;
 };
 
+function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('token');
+}
+
 interface ApiResponse<T = any> {
   data?: T;
   error?: string;
@@ -22,10 +27,12 @@ interface User {
   email: string;
   first_name: string;
   last_name: string;
+  role?: string;
 }
 
 interface LoginResponse {
   message: string;
+  token: string;
   user: User;
 }
 
@@ -56,12 +63,18 @@ class ApiClient {
     }
 
     try {
+      const token = getToken();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options.headers as Record<string, string> || {}),
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
         ...options,
+        headers,
       });
 
       const data = await response.json();
@@ -89,14 +102,14 @@ class ApiClient {
     password: string;
     pin: string;
   }): Promise<ApiResponse<SignupResponse>> {
-    return this.request<SignupResponse>('/signup/', {
+    return this.request<SignupResponse>('/signup', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
   async login(credentials: { email: string; password: string }): Promise<ApiResponse<LoginResponse>> {
-    return this.request<LoginResponse>('/login/', {
+    return this.request<LoginResponse>('/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
@@ -104,7 +117,7 @@ class ApiClient {
 
   // Transfers
   async getTransfers(userId: number) {
-    return this.request(`/transfers/?user_id=${userId}`);
+    return this.request(`/transfers?user_id=${userId}`);
   }
 
   async createTransfer(transferData: {
@@ -121,7 +134,7 @@ class ApiClient {
     description: string;
     pin: string;
   }) {
-    return this.request('/transfers/', {
+    return this.request('/transfers', {
       method: 'POST',
       body: JSON.stringify(transferData),
     });
@@ -129,7 +142,7 @@ class ApiClient {
 
   // Settings
   async getSettings(userId: number) {
-    return this.request(`/settings/?user_id=${userId}`);
+    return this.request(`/settings?user_id=${userId}`);
   }
 
   async updatePassword(passwordData: {
@@ -138,10 +151,40 @@ class ApiClient {
     new_password: string;
     confirm_password: string;
   }) {
-    return this.request('/settings/', {
+    return this.request('/settings', {
       method: 'POST',
       body: JSON.stringify(passwordData),
     });
+  }
+
+  // Profile Picture Upload (multipart — handled separately)
+  async uploadProfilePicture(userId: number, file: File): Promise<ApiResponse> {
+    if (loadingSetter) {
+      loadingSetter(true);
+      if (messageSetter) messageSetter('Uploading profile picture...');
+    }
+    try {
+      const token = getToken();
+      const formData = new FormData();
+      formData.append('user_id', String(userId));
+      formData.append('profile_picture', file);
+
+      const headers: Record<string, string> = {};
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${this.baseUrl}/settings`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      const data = await response.json();
+      if (!response.ok) return { error: data.error || 'Upload failed' };
+      return { data };
+    } catch {
+      return { error: 'Network error' };
+    } finally {
+      if (loadingSetter) loadingSetter(false);
+    }
   }
 
   // Deposit
@@ -153,7 +196,7 @@ class ApiClient {
     deposit_amount: number;
     card_holder_name: string;
   }) {
-    return this.request('/deposit/', {
+    return this.request('/deposit', {
       method: 'POST',
       body: JSON.stringify(depositData),
     });
@@ -161,12 +204,12 @@ class ApiClient {
 
   // Dashboard
   async getDashboardStats(userId: number) {
-    return this.request(`/dashboard/?user_id=${userId}`);
+    return this.request(`/dashboard?user_id=${userId}`);
   }
 
   // Card Details
   async getCardDetails(userId: number) {
-    return this.request(`/card/?user_id=${userId}`);
+    return this.request(`/card?user_id=${userId}`);
   }
 }
 

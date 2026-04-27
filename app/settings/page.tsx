@@ -4,6 +4,7 @@ import Sidebar from "../components/Sidebar";
 import { useState, useEffect } from "react";
 import { apiClient } from "@/lib/api";
 import { useAuth } from "@/lib/AuthContext";
+import UserAvatar from "../components/UserAvatar";
 
 export default function Settings() {
    const { user } = useAuth();
@@ -18,20 +19,12 @@ export default function Settings() {
     setError("");
     setSuccess("");
     try {
-      const formData = new FormData();
-      formData.append('user_id', String(user.id));
-      formData.append('profile_picture', file);
-      const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/settings/`;
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await response.json();
-      if (!response.ok || data.error) {
-        setError(data.error || 'An error occurred');
+      const response = await apiClient.uploadProfilePicture(user.id, file);
+      if (response.error) {
+        setError(response.error);
       } else {
         setSuccess('Profile picture updated!');
-        await fetchUserData(); // Refresh user data to get new profile picture
+        await fetchUserData();
       }
     } catch (err) {
       setError('Failed to upload profile picture');
@@ -127,10 +120,13 @@ export default function Settings() {
           <div className="bg-white rounded-2xl p-8 shadow-2xl border border-gray-200 mb-4">
             <h2 className="text-xl font-bold mb-6 text-blue-600">Profile</h2>
             <div className="flex flex-col md:flex-row gap-6 items-center">
-              <div className="flex-shrink-0">
-                <div className="w-28 h-28 rounded-full overflow-hidden border-2 border-blue-600 bg-blue-50">
-                  <img src={profilePic ?? '/cruz.png'} alt="Profile" className="w-full h-full object-cover" />
-                </div>
+              <div className="flex-shrink-0 flex flex-col items-center">
+                <UserAvatar
+                  profilePicture={profilePic}
+                  firstName={userData?.first_name}
+                  lastName={userData?.last_name}
+                  size={112}
+                />
                 <label className="mt-3 flex items-center gap-3 text-sm">
                   <input
                     type="file"
