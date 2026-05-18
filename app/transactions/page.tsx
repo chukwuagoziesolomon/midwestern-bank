@@ -72,13 +72,13 @@ export default function Transactions() {
          // Map API response to expected format
          const mappedTransactions = response.data.map((transfer: any) => ({
            status: transfer.status === 'completed' ? 'Successful' : transfer.status,
-           date: new Date(transfer.date).toLocaleDateString('en-US', {
+           date: new Date(transfer.created_at).toLocaleDateString('en-US', {
              weekday: 'long',
              month: 'short',
              day: 'numeric',
              year: 'numeric'
            }),
-           time: new Date(transfer.date).toLocaleTimeString(),
+           time: new Date(transfer.created_at).toLocaleTimeString(),
            description: transfer.description,
            category: 'debit', // Assuming all transfers are debits for now
            amount: `$ ${parseFloat(transfer.amount).toFixed(2)}`,

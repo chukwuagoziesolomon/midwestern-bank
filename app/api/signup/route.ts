@@ -39,7 +39,7 @@ function generateRandomTransactions(userId: number, count: number) {
     const isCredit = Math.random() > 0.4; // 60% credits, 40% debits
     const amount = (randomBetween(50, 15000) + Math.random()).toFixed(2);
     const daysAgo = randomBetween(1, 90);
-    const createdAt = new Date(now - daysAgo * 24 * 60 * 60 * 1000);
+    const createdAt = new Date(now - daysAgo * 24 * 60 * 60 * 1000).toISOString();
 
     transactions.push({
       userId,
