@@ -156,7 +156,6 @@ export default function Dashboard() {
             <div className="text-xs text-[#888]">{userData?.email || ''}</div>
           </div>
         </div>
-import UserAvatar from "../components/UserAvatar";
 
         {/* Page Title */}
         <div className="mb-10 z-10 relative mt-8 md:mt-0">
